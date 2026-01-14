@@ -1098,20 +1098,37 @@
             const success = data.workouts.filter(w => w.total >= 50).length;
             const avgPerDay = data.workouts.length > 0 ? Math.round(total / data.workouts.length) : 0;
 
+            // Считаем серию от последней тренировки (не обязательно сегодня)
             let streak = 0;
-            let current = new Date();
 
-            for (let i = 0; i < 365; i++) {
-                const dateStr = current.toDateString();
-                const workout = data.workouts.find(w => w.date === dateStr);
+            // Сначала найдём последнюю тренировку
+            if (data.workouts.length > 0) {
+                // Сортируем по датам (новые первыми)
+                const sorted = [...data.workouts].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-                if (workout && workout.total >= 50 && !workout.missed) {
-                    streak++;
-                    current.setDate(current.getDate() - 1);
-                } else if (workout && workout.missed) {
-                    break;
-                } else {
-                    break;
+                let current = new Date(sorted[0].date);
+                const today = new Date();
+
+                // Начинаем от последней тренировки и идём назад
+                for (let i = 0; i < 365; i++) {
+                    const dateStr = current.toDateString();
+                    const workout = data.workouts.find(w => w.date === dateStr);
+
+                    if (workout) {
+                        if (workout.total >= 50 && !workout.missed) {
+                            streak++;
+                            current.setDate(current.getDate() - 1);
+                        } else if (workout.missed) {
+                            // Пропуск прерывает серию
+                            break;
+                        } else {
+                            // Тренировка, но < 50 отжиманий - прерывает серию
+                            break;
+                        }
+                    } else {
+                        // Нет тренировки - конец серии
+                        break;
+                    }
                 }
             }
 
