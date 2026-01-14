@@ -3,563 +3,1072 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>50 отжиманий - Локальный трекер прогресса</title>
+    <title>Отжимания 50/день - Локальный трекер</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --success: #48bb78;
+            --danger: #f56565;
+            --bg: #f7fafc;
+            --card: #ffffff;
+            --text: #2d3748;
+            --text-light: #718096;
+            --border: #e2e8f0;
         }
 
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             min-height: 100vh;
+            padding: 16px 12px;
+            color: var(--text);
+        }
+
+
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+        }
+
+        .header { 
+            text-align: center; 
+            color: white; 
+            margin-bottom: 24px; 
+        }
+
+        .header h1 { 
+            font-size: clamp(1.5em, 5vw, 2.5em); 
+            font-weight: 800; 
+            margin-bottom: 8px; 
+            word-break: break-word;
+        }
+
+        .header p { 
+            font-size: clamp(0.9em, 3vw, 1.1em); 
+            opacity: 0.95; 
+            word-break: break-word;
+        }
+
+
+        .auth-section {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+
+        .auth-section input {
+            width: 100%;
             padding: 12px;
+            margin-bottom: 12px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1em;
+        }
+
+
+        .auth-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+
+        .section-title { 
+            font-size: clamp(1em, 3vw, 1.2em); 
+            font-weight: 700; 
+            margin-bottom: 16px; 
+            color: var(--text); 
+            word-break: break-word;
+        }
+
+
+        .month-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+
+        .month-nav {
+            display: flex;
+            gap: 8px;
+            order: 2;
+        }
+
+
+        .month-nav button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+
+        .month-nav button:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+
+        .month-name { 
+            font-size: clamp(1em, 3vw, 1.3em); 
+            font-weight: 700; 
+            text-align: center; 
+            flex: 1;
+            min-width: 200px;
+            word-break: break-word;
+            order: 1;
+        }
+
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+
+        .weekday-header {
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-light);
+            font-size: clamp(0.7em, 2vw, 0.9em);
+            padding: 6px 2px;
+            text-transform: uppercase;
+        }
+
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        /* ГЛАВНЫЙ ЗАГОЛОВОК */
-        .header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 24px;
-            font-size: 18px;
-        }
-
-        .header-emoji {
-            font-size: 24px;
-        }
-
-        .header-text h1 {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 4px;
-        }
-
-        .header-text p {
-            font-size: 12px;
-            color: #888;
-        }
-
-        .btn-exit {
-            margin-left: auto;
-            padding: 8px 16px;
-            background: #ff6b9d;
-            color: white;
-            border: none;
-            border-radius: 6px;
             font-weight: 600;
+            font-size: clamp(0.8em, 2vw, 1em);
             cursor: pointer;
-            font-size: 14px;
+            transition: all 0.2s;
+            background: var(--bg);
+            border: 2px solid transparent;
+            min-height: 45px;
+            word-break: break-word;
+            padding: 2px;
         }
 
-        /* КАРТОЧКА КАЛЕНДАРЯ */
-        .card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 20px;
-            color: white;
+
+        .calendar-day:hover { 
+            transform: scale(1.05); 
+            background: var(--border); 
         }
 
-        .card-header {
+        .calendar-day.other-month { 
+            color: var(--text-light); 
+            opacity: 0.5; 
+            cursor: default; 
+        }
+
+        .calendar-day.other-month:hover { 
+            transform: none; 
+            background: var(--bg); 
+        }
+
+        .calendar-day.today { 
+            background: var(--primary); 
+            color: white; 
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2); 
+        }
+
+        .calendar-day.trained { 
+            background: var(--success); 
+            color: white; 
+            font-weight: 800; 
+        }
+
+        .calendar-day.partial { 
+            background: var(--primary); 
+            color: white; 
+        }
+
+        .calendar-day.missed { 
+            background: #fed7d7; 
+            color: #c53030; 
+        }
+
+        .calendar-day.selected { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 2px var(--primary); 
+        }
+
+
+        .input-group {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 12px;
             margin-bottom: 16px;
         }
 
-        .card-title {
-            font-size: 16px;
-            font-weight: 600;
-            flex: 1;
-        }
 
-        .card-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-control {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-
-        .btn-control:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        /* МЕСЯЦ И ГОД */
-        .month-year {
-            text-align: center;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-
-        /* КАЛЕНДАРЬ - КРИТИЧНАЯ ЧАСТЬ */
-        .calendar-wrapper {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .calendar-grid {
+        .set-row {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            min-width: 100%;
-            width: 100%;
+            grid-template-columns: 1fr 40px;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
         }
 
-        .day-header {
-            text-align: center;
+
+        input, textarea {
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            background: var(--bg);
+            color: var(--text);
+            word-break: break-word;
+        }
+
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+
+
+        .btn {
+            padding: 14px 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: clamp(0.9em, 2vw, 1em);
             font-weight: 600;
-            font-size: 12px;
-            padding: 8px 4px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
             cursor: pointer;
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
             transition: all 0.2s;
-            min-height: 40px;
+            width: 100%;
+            word-break: break-word;
         }
 
-        .calendar-day:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(1.05);
-        }
 
-        .calendar-day.other-month {
-            color: rgba(255, 255, 255, 0.4);
-            cursor: default;
-        }
-
-        .calendar-day.selected {
-            background: #ff6b9d;
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            font-weight: 700;
         }
 
-        .calendar-day.today {
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.8);
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
 
-        /* КАРТОЧКА ТРЕНИРОВКИ */
-        .workout-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 16px;
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+
+        .btn-small {
+            padding: 10px 12px;
+            font-size: 0.9em;
+        }
+
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+
+        .stat {
+            text-align: center;
             padding: 16px;
-            margin-bottom: 20px;
-            color: white;
+            background: var(--bg);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
         }
 
-        .workout-card h3 {
-            font-size: 16px;
+
+        .stat-value { 
+            font-size: clamp(1.5em, 4vw, 2em); 
+            font-weight: 800; 
+            color: var(--primary); 
+            word-break: break-word;
+        }
+
+        .stat-label { 
+            font-size: clamp(0.75em, 2vw, 0.85em); 
+            color: var(--text-light); 
+            margin-top: 4px; 
+            word-break: break-word;
+        }
+
+
+        .hidden { display: none; }
+
+
+        .status {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
             margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 0.9em;
+            border-left: 4px solid #28a745;
+            word-break: break-word;
         }
 
-        .workout-form {
+        .sync-status {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            margin-bottom: 12px;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .sync-status.synced {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .sync-status.syncing {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        .sync-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #f5c6cb;
+        }
+
+        .firebase-toggle {
             display: flex;
             gap: 8px;
             margin-bottom: 12px;
+            flex-wrap: wrap;
         }
 
-        .workout-form input {
+        .firebase-toggle button {
             flex: 1;
             padding: 10px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .workout-form input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .workout-form button {
-            padding: 10px 16px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            border-radius: 6px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
             cursor: pointer;
             font-weight: 600;
-            transition: background 0.2s;
+            font-size: 0.9em;
+            transition: all 0.2s;
+            min-width: 140px;
         }
 
-        .workout-form button:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .workout-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .workout-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .workout-item button {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
+        .firebase-toggle button.active {
+            background: var(--primary);
             color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
+            border-color: var(--primary);
         }
 
-        .empty-message {
-            text-align: center;
-            padding: 20px;
-            color: #999;
-            font-size: 14px;
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8em; }
+            .container { max-width: 100%; }
+            .stats { grid-template-columns: 1fr 1fr; }
+            .card { padding: 16px; }
+            .month-header { margin-bottom: 12px; }
+            body { padding: 12px 8px; }
         }
 
-        /* АДАПТИВ ДЛЯ МОБИЛЬНЫХ */
-        @media (max-width: 480px) {
-            body {
-                padding: 8px;
-            }
-
-            .container {
-                padding: 16px;
-                border-radius: 16px;
-            }
-
-            .header {
-                font-size: 16px;
-                margin-bottom: 20px;
-            }
-
-            .header-text h1 {
-                font-size: 18px;
-            }
-
-            .card {
-                padding: 12px;
-                margin-bottom: 16px;
-            }
-
-            .card-title {
-                font-size: 14px;
-            }
-
-            .month-year {
-                font-size: 16px;
-                margin-bottom: 12px;
-            }
-
-            .calendar-grid {
-                gap: 4px;
-            }
-
-            .day-header {
-                font-size: 11px;
-                padding: 6px 2px;
-            }
-
-            .calendar-day {
-                font-size: 13px;
-                min-height: 36px;
-                border-radius: 4px;
-            }
-
-            .workout-card {
-                padding: 12px;
-            }
-
-            .workout-form {
-                flex-direction: column;
-                gap: 6px;
-            }
-
-            .workout-form input,
-            .workout-form button {
-                padding: 8px;
-                font-size: 13px;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .header-text p {
-                display: none;
-            }
-
-            .btn-exit {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-
-            .calendar-grid {
-                gap: 3px;
-            }
-
-            .day-header {
-                font-size: 10px;
-                padding: 4px 2px;
-            }
-
-            .calendar-day {
-                font-size: 12px;
-                min-height: 32px;
-            }
+        @media (max-width: 400px) {
+            .calendar-day { min-height: 40px; }
+            .stat { padding: 12px; }
+            .set-row { grid-template-columns: 1fr 35px; gap: 6px; }
+            .delete-btn { padding: 6px 8px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Заголовок -->
         <div class="header">
-            <div class="header-emoji">💪</div>
-            <div class="header-text">
-                <h1>50 отжиманий</h1>
-                <p>Локальный трекер прогресса</p>
-            </div>
-            <button class="btn-exit" onclick="clearData()">Выход</button>
+            <h1>💪 50 отжиманий</h1>
+            <p>Трекер прогресса</p>
         </div>
 
-        <!-- Календарь -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">📅 Календарь тренировок</div>
-                <div class="card-controls">
-                    <button class="btn-control" onclick="previousMonth()">◀</button>
-                    <button class="btn-control" onclick="nextMonth()">▶</button>
+
+        <!-- Авторизация -->
+        <div id="authSection" class="auth-section">
+            <div class="status">✅ Данные хранятся локально на вашем устройстве</div>
+            <h2 style="margin-bottom: 16px; font-size: clamp(1.1em, 3vw, 1.3em);">👋 Добро пожаловать!</h2>
+            <p style="color: var(--text-light); margin-bottom: 16px; font-size: clamp(0.85em, 2vw, 0.95em);">Введите имя для начала отслеживания прогресса</p>
+            <input type="text" id="authUser" placeholder="Ваше имя">
+            
+            <div class="firebase-toggle" id="firebaseToggleAuth">
+                <button class="active" onclick="setAuthMode('local')">📱 Локально</button>
+                <button onclick="setAuthMode('firebase')">☁️ Firebase</button>
+            </div>
+
+            <div id="firebaseAuthSection" class="hidden" style="margin-bottom: 16px;">
+                <input type="email" id="firebaseEmail" placeholder="Email">
+                <input type="password" id="firebasePassword" placeholder="Пароль" style="margin-top: 12px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+                    <button class="btn btn-primary btn-small" onclick="firebaseRegister()">Регистрация</button>
+                    <button class="btn btn-primary btn-small" onclick="firebaseLogin()">Вход</button>
+                </div>
+                <div id="firebaseAuthMessage" style="margin-top: 12px; color: var(--text-light); font-size: 0.9em;"></div>
+            </div>
+
+            <button class="btn btn-primary" onclick="startApp()" style="margin-top: 12px;">Начать</button>
+            <p id="authMessage" style="margin-top: 12px; color: var(--text-light); font-size: 0.9em;"></p>
+        </div>
+
+
+        <!-- Основное приложение -->
+        <div id="appSection" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 8px; flex-wrap: wrap;">
+                <div id="syncStatus"></div>
+                <button class="btn btn-danger btn-small" onclick="logout()" style="width: auto; padding: 8px 12px; white-space: nowrap;">Выход</button>
+            </div>
+
+
+            <div class="card">
+                <div class="section-title">📅 Календарь тренировок</div>
+                <div class="month-header">
+                    <div class="month-nav">
+                        <button onclick="prevMonth()">◀</button>
+                        <button onclick="nextMonth()">▶</button>
+                    </div>
+                    <div class="month-name" id="monthName"></div>
+                </div>
+                <div class="calendar" id="calendar"></div>
+            </div>
+
+
+            <div class="card">
+                <div class="section-title">⚡ Запишите тренировку</div>
+                <div style="background: var(--bg); padding: 12px; border-radius: 10px; margin-bottom: 16px; text-align: center;">
+                    <p style="color: var(--text-light); font-size: 0.9em; margin: 0;">Выбранная дата:</p>
+                    <p style="color: var(--text); font-weight: 700; margin: 4px 0; word-break: break-word;" id="selectedDateDisplay">-</p>
+                </div>
+                <div class="input-group">
+                    <input type="time" id="workoutTime" placeholder="⏰ Время">
+                    <div id="setsContainer">
+                        <div class="set-row">
+                            <input type="number" class="set-input" placeholder="Повторения подхода 1" min="0">
+                            <button class="delete-btn" onclick="deleteSet(this)">❌</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-small" onclick="addSet()">➕ Добавить подход</button>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="saveWorkout()">✅ Записать</button>
+                    <button class="btn btn-danger" onclick="markMissed()">❌ Пропуск</button>
                 </div>
             </div>
 
-            <div class="month-year" id="monthYear"></div>
 
-            <div class="calendar-wrapper">
-                <div class="calendar-grid" id="calendar"></div>
+            <div class="card">
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value" id="totalPushups">0</div>
+                        <div class="stat-label">Всего отжиманий</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="streak">0</div>
+                        <div class="stat-label">Серия дней</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="successDays">0</div>
+                        <div class="stat-label">Успешных дней</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="avgPerDay">0</div>
+                        <div class="stat-label">В день (средняя)</div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Выбранная дата -->
-        <div style="text-align: center; margin-bottom: 16px; font-size: 14px; color: #666;">
-            <strong>Выбранная дата:</strong> <span id="selectedDate" style="color: #667eea; font-weight: 600;">Выберите дату в календаре</span>
-        </div>
 
-        <!-- Форма добавления тренировки -->
-        <div class="workout-card">
-            <h3>⚡ Запишите тренировку</h3>
-            <div class="workout-form">
-                <input type="number" id="pushupCount" placeholder="Количество отжиманий" min="1" max="1000">
-                <button onclick="addWorkout()">Добавить</button>
+            <div class="card">
+                <div class="section-title">📊 История выбранной даты</div>
+                <div id="selectedDateInfo">
+                    <p style="color: var(--text-light); text-align: center;">Выберите дату в календаре</p>
+                </div>
             </div>
-            <div class="workout-list" id="workoutList">
-                <div class="empty-message">Нет записей веса</div>
+
+
+            <div class="card">
+                <div class="section-title">⚖️ Вес</div>
+                <div class="input-group">
+                    <input type="number" id="weight" placeholder="Вес, кг" step="0.1">
+                    <button class="btn btn-primary btn-small" onclick="saveWeight()">Сохранить вес</button>
+                </div>
+                <div id="weightInfo" style="margin-top: 12px; padding: 12px; background: var(--bg); border-radius: 10px; text-align: center;">
+                    <p style="color: var(--text-light); font-size: 0.9em;">Нет записей веса</p>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="section-title">📈 График отжиманий (последние 14 дней)</div>
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;" id="chart"></div>
             </div>
         </div>
     </div>
 
-    <script>
-        let currentDate = new Date();
-        let selectedDate = null;
-        let workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
 
-        function renderCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+
+    <script>
+        // Firebase конфигурация
+        const firebaseConfig = {
+            apiKey: "AIzaSyDv_test_key_replace_this",
+            authDomain: "pushups-tracker-test.firebaseapp.com",
+            databaseURL: "https://pushups-tracker-test.firebaseio.com",
+            projectId: "pushups-tracker-test",
+            storageBucket: "pushups-tracker-test.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
+        };
+
+        // Переменные приложения
+        let currentUser = null;
+        let data = { workouts: [], weights: [] };
+        let selectedDate = new Date().toDateString();
+        let currentMonth = new Date();
+        let useFirebase = false;
+        let firebaseUser = null;
+        let authMode = 'local';
+        let syncingInProgress = false;
+
+        // Инициализация Firebase (если используется)
+        let firebaseInitialized = false;
+        function initFirebase() {
+            if (!firebaseInitialized && document.querySelector('script[src*="firebase"]')) {
+                try {
+                    firebase.initializeApp(firebaseConfig);
+                    firebaseInitialized = true;
+                    console.log('Firebase инициализирован');
+                } catch (error) {
+                    console.log('Firebase уже инициализирован или недоступен');
+                }
+            }
+        }
+
+        function setAuthMode(mode) {
+            authMode = mode;
+            useFirebase = mode === 'firebase';
+            
+            document.querySelectorAll('#firebaseToggleAuth button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const firebaseSection = document.getElementById('firebaseAuthSection');
+            if (useFirebase) {
+                firebaseSection.classList.remove('hidden');
+                document.getElementById('authUser').style.display = 'none';
+            } else {
+                firebaseSection.classList.add('hidden');
+                document.getElementById('authUser').style.display = 'block';
+                document.getElementById('firebaseAuthMessage').textContent = '';
+            }
+        }
+
+        function firebaseRegister() {
+            initFirebase();
+            const email = document.getElementById('firebaseEmail').value.trim();
+            const password = document.getElementById('firebasePassword').value.trim();
+
+            if (!email || !password) {
+                document.getElementById('firebaseAuthMessage').textContent = '❌ Введите email и пароль';
+                return;
+            }
+
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    firebaseUser = userCredential.user;
+                    currentUser = userCredential.user.uid;
+                    document.getElementById('firebaseAuthMessage').textContent = '✅ Регистрация успешна! Нажмите "Начать"';
+                })
+                .catch(error => {
+                    document.getElementById('firebaseAuthMessage').textContent = '❌ ' + error.message;
+                });
+        }
+
+        function firebaseLogin() {
+            initFirebase();
+            const email = document.getElementById('firebaseEmail').value.trim();
+            const password = document.getElementById('firebasePassword').value.trim();
+
+            if (!email || !password) {
+                document.getElementById('firebaseAuthMessage').textContent = '❌ Введите email и пароль';
+                return;
+            }
+
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    firebaseUser = userCredential.user;
+                    currentUser = userCredential.user.uid;
+                    document.getElementById('firebaseAuthMessage').textContent = '✅ Вход успешен! Нажмите "Начать"';
+                })
+                .catch(error => {
+                    document.getElementById('firebaseAuthMessage').textContent = '❌ ' + error.message;
+                });
+        }
+
+        function updateSyncStatus(status, type = 'synced') {
+            const statusDiv = document.getElementById('syncStatus');
+            if (!statusDiv) return;
+
+            statusDiv.className = 'sync-status ' + type;
+            statusDiv.textContent = status;
+        }
+
+        function loadUserData() {
+            if (useFirebase && firebaseUser) {
+                loadFirebaseData();
+            } else {
+                loadLocalData();
+            }
+        }
+
+        function loadLocalData() {
+            const storageKey = 'pushups_' + currentUser;
+            const stored = localStorage.getItem(storageKey);
+            if (stored) {
+                data = JSON.parse(stored);
+            } else {
+                data = { workouts: [], weights: [] };
+            }
+            renderMonth();
+            selectDate(selectedDate);
+            updateStats();
+            updateSyncStatus('📱 Локальное хранилище', 'synced');
+        }
+
+        function loadFirebaseData() {
+            updateSyncStatus('☁️ Загрузка данных...', 'syncing');
+            
+            const dbRef = firebase.database().ref('users/' + currentUser + '/data');
+            dbRef.on('value', snapshot => {
+                if (snapshot.exists()) {
+                    data = snapshot.val();
+                } else {
+                    data = { workouts: [], weights: [] };
+                }
+                renderMonth();
+                selectDate(selectedDate);
+                updateStats();
+                updateSyncStatus('☁️ Синхронизировано', 'synced');
+            }, error => {
+                updateSyncStatus('❌ Ошибка синхронизации', 'error');
+                loadLocalData();
+            });
+        }
+
+        function saveUserData() {
+            if (useFirebase && firebaseUser && firebaseInitialized) {
+                saveFirebaseData();
+            } else {
+                saveLocalData();
+            }
+        }
+
+        function saveLocalData() {
+            const storageKey = 'pushups_' + currentUser;
+            localStorage.setItem(storageKey, JSON.stringify(data));
+        }
+
+        function saveFirebaseData() {
+            if (!firebaseUser) return;
+
+            updateSyncStatus('☁️ Сохранение...', 'syncing');
+            
+            firebase.database().ref('users/' + currentUser + '/data').set(data)
+                .then(() => {
+                    updateSyncStatus('☁️ Синхронизировано', 'synced');
+                })
+                .catch(error => {
+                    updateSyncStatus('❌ Ошибка сохранения', 'error');
+                    saveLocalData();
+                });
+        }
+
+        function startApp() {
+            if (useFirebase) {
+                if (!firebaseUser || !currentUser) {
+                    document.getElementById('firebaseAuthMessage').textContent = '❌ Пожалуйста, авторизуйтесь';
+                    return;
+                }
+            } else {
+                const user = document.getElementById('authUser').value.trim();
+                if (!user) {
+                    document.getElementById('authMessage').textContent = '❌ Введите имя';
+                    return;
+                }
+                currentUser = user;
+            }
+
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('appSection').classList.remove('hidden');
+            loadUserData();
+        }
+
+        function logout() {
+            if (useFirebase && firebaseInitialized) {
+                firebase.auth().signOut().then(() => {
+                    firebaseUser = null;
+                    useFirebase = false;
+                });
+            }
+
+            currentUser = null;
+            useFirebase = false;
+            authMode = 'local';
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('appSection').classList.add('hidden');
+            document.getElementById('authUser').value = '';
+            document.getElementById('firebaseEmail').value = '';
+            document.getElementById('firebasePassword').value = '';
+            document.getElementById('authMessage').textContent = '';
+            document.getElementById('firebaseAuthMessage').textContent = '';
+            
+            const buttons = document.querySelectorAll('#firebaseToggleAuth button');
+            if (buttons.length > 0) {
+                buttons[0].classList.add('active');
+                buttons.forEach((btn, i) => {
+                    if (i > 0) btn.classList.remove('active');
+                });
+            }
+            
+            document.getElementById('authUser').style.display = 'block';
+            document.getElementById('firebaseAuthSection').classList.add('hidden');
+        }
+
+        function prevMonth() {
+            currentMonth.setMonth(currentMonth.getMonth() - 1);
+            renderMonth();
+        }
+
+        function nextMonth() {
+            currentMonth.setMonth(currentMonth.getMonth() + 1);
+            renderMonth();
+        }
+
+        function renderMonth() {
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
+            const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+            document.getElementById('monthName').textContent = `${monthNames[month]} ${year}`;
+
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
             const daysInMonth = lastDay.getDate();
-            const startingDayOfWeek = firstDay.getDay();
-
-            document.getElementById('monthYear').textContent = 
-                currentDate.toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
+            const startingDayOfWeek = (firstDay.getDay() + 6) % 7;
 
             const calendar = document.getElementById('calendar');
             calendar.innerHTML = '';
-
-            // Дни недели
-            const dayNames = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
-            dayNames.forEach(day => {
+            
+            ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(day => {
                 const header = document.createElement('div');
-                header.className = 'day-header';
+                header.className = 'weekday-header';
                 header.textContent = day;
                 calendar.appendChild(header);
             });
-
-            // Пустые дни предыдущего месяца
-            for (let i = 0; i < (startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1); i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.className = 'calendar-day other-month';
-                emptyDay.textContent = '';
-                calendar.appendChild(emptyDay);
+            
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+            for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day other-month';
+                day.textContent = prevMonthLastDay - i;
+                calendar.appendChild(day);
             }
 
-            // Дни текущего месяца
+            const today = new Date();
             for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dateStr = date.toDateString();
+
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day';
                 dayElement.textContent = day;
+                dayElement.onclick = () => selectDate(dateStr);
 
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const today = new Date();
-                const isToday = day === today.getDate() && 
-                               month === today.getMonth() && 
-                               year === today.getFullYear();
+                const workout = data.workouts.find(w => w.date === dateStr);
 
-                if (isToday) {
+                if (dateStr === today.toDateString()) {
                     dayElement.classList.add('today');
                 }
 
-                if (workoutData[dateStr]) {
+                if (workout) {
+                    if (workout.missed) {
+                        dayElement.classList.add('missed');
+                    } else if (workout.total >= 50) {
+                        dayElement.classList.add('trained');
+                    } else {
+                        dayElement.classList.add('partial');
+                    }
+                }
+
+                if (dateStr === selectedDate) {
                     dayElement.classList.add('selected');
                 }
 
-                dayElement.addEventListener('click', () => selectDate(dateStr));
                 calendar.appendChild(dayElement);
             }
 
-            // Пустые дни следующего месяца
-            const totalCells = calendar.children.length - 7; // -7 для дней недели
-            const remainingCells = 35 - totalCells;
-            for (let i = 0; i < remainingCells; i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.className = 'calendar-day other-month';
-                emptyDay.textContent = '';
-                calendar.appendChild(emptyDay);
+            const totalCells = calendar.children.length;
+            const remainingCells = 42 - totalCells;
+            for (let i = 1; i <= remainingCells; i++) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day other-month';
+                day.textContent = i;
+                calendar.appendChild(day);
             }
         }
 
         function selectDate(dateStr) {
             selectedDate = dateStr;
-            const date = new Date(dateStr + 'T00:00:00');
-            document.getElementById('selectedDate').textContent = 
-                date.toLocaleString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            renderWorkoutList();
-            renderCalendar();
-        }
-
-        function addWorkout() {
-            if (!selectedDate) {
-                alert('Выберите дату в календаре');
-                return;
-            }
-
-            const count = parseInt(document.getElementById('pushupCount').value);
-            if (!count || count < 1) {
-                alert('Введите количество отжиманий');
-                return;
-            }
-
-            if (!workoutData[selectedDate]) {
-                workoutData[selectedDate] = [];
-            }
-
-            workoutData[selectedDate].push({
-                count: count,
-                timestamp: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
-            });
-
-            localStorage.setItem('workoutData', JSON.stringify(workoutData));
-            document.getElementById('pushupCount').value = '';
-            renderWorkoutList();
-            renderCalendar();
-        }
-
-        function renderWorkoutList() {
-            const list = document.getElementById('workoutList');
+            const workout = data.workouts.find(w => w.date === dateStr);
             
-            if (!selectedDate || !workoutData[selectedDate] || workoutData[selectedDate].length === 0) {
-                list.innerHTML = '<div class="empty-message">Нет записей веса</div>';
+            const dateObj = new Date(dateStr);
+            document.getElementById('selectedDateDisplay').textContent = dateObj.toLocaleDateString('ru-RU', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+
+            renderMonth();
+
+            const setsContainer = document.getElementById('setsContainer');
+            setsContainer.innerHTML = '<div class="set-row"><input type="number" class="set-input" placeholder="Повторения подхода 1" min="0"><button class="delete-btn" onclick="deleteSet(this)">❌</button></div>';
+            document.getElementById('workoutTime').value = '';
+
+            if (workout && workout.sets && workout.sets.length > 0) {
+                setsContainer.innerHTML = '';
+                workout.sets.forEach((sets, index) => {
+                    const row = document.createElement('div');
+                    row.className = 'set-row';
+                    row.innerHTML = `<input type="number" class="set-input" placeholder="Повторения подхода ${index + 1}" min="0" value="${sets}"><button class="delete-btn" onclick="deleteSet(this)">❌</button>`;
+                    setsContainer.appendChild(row);
+                });
+                document.getElementById('workoutTime').value = workout.time || '';
+            }
+
+            displayWorkoutInfo();
+            updateStats();
+        }
+
+        function addSet() {
+            const setsContainer = document.getElementById('setsContainer');
+            const setCount = setsContainer.children.length + 1;
+            const row = document.createElement('div');
+            row.className = 'set-row';
+            row.innerHTML = `<input type="number" class="set-input" placeholder="Повторения подхода ${setCount}" min="0"><button class="delete-btn" onclick="deleteSet(this)">❌</button>`;
+            setsContainer.appendChild(row);
+        }
+
+        function deleteSet(btn) {
+            btn.parentElement.remove();
+        }
+
+        function saveWorkout() {
+            const inputs = document.querySelectorAll('.set-input');
+            const sets = Array.from(inputs).map(input => parseInt(input.value) || 0);
+            const total = sets.reduce((a, b) => a + b, 0);
+            const time = document.getElementById('workoutTime').value;
+
+            const existingIdx = data.workouts.findIndex(w => w.date === selectedDate);
+            const workout = { date: selectedDate, time, sets, total, missed: false };
+
+            if (existingIdx >= 0) {
+                data.workouts[existingIdx] = workout;
+            } else {
+                data.workouts.push(workout);
+            }
+
+            saveUserData();
+            renderMonth();
+            updateStats();
+            alert(total >= 50 ? `✅ Отлично! ${total} отжиманий!` : `📝 Записано ${total} отжиманий`);
+        }
+
+        function markMissed() {
+            const existingIdx = data.workouts.findIndex(w => w.date === selectedDate);
+            const workout = { date: selectedDate, missed: true, total: 0, sets: [], time: '' };
+
+            if (existingIdx >= 0) {
+                data.workouts[existingIdx] = workout;
+            } else {
+                data.workouts.push(workout);
+            }
+
+            saveUserData();
+            renderMonth();
+            updateStats();
+            alert('❌ День отмечен как пропуск');
+        }
+
+        function saveWeight() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            if (!weight || weight <= 0) {
+                alert('Введите вес');
                 return;
             }
 
-            list.innerHTML = workoutData[selectedDate]
-                .map((workout, index) => `
-                    <div class="workout-item">
-                        <span>${workout.count} отжиманий - ${workout.timestamp}</span>
-                        <button onclick="deleteWorkout('${selectedDate}', ${index})">✕</button>
-                    </div>
-                `)
-                .join('');
-        }
-
-        function deleteWorkout(dateStr, index) {
-            workoutData[dateStr].splice(index, 1);
-            if (workoutData[dateStr].length === 0) {
-                delete workoutData[dateStr];
+            const existingIdx = data.weights.findIndex(w => w.date === selectedDate);
+            if (existingIdx >= 0) {
+                data.weights[existingIdx] = { date: selectedDate, weight };
+            } else {
+                data.weights.push({ date: selectedDate, weight });
             }
-            localStorage.setItem('workoutData', JSON.stringify(workoutData));
-            renderWorkoutList();
-            renderCalendar();
+
+            saveUserData();
+            updateStats();
+            document.getElementById('weight').value = '';
+            alert('✅ Вес сохранён');
         }
 
-        function previousMonth() {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar();
+        function displayWorkoutInfo() {
+            const workout = data.workouts.find(w => w.date === selectedDate);
+            const infoDiv = document.getElementById('selectedDateInfo');
+
+            if (!workout) {
+                infoDiv.innerHTML = '<p style="color: var(--text-light); text-align: center;">Нет данных</p>';
+                return;
+            }
+
+            if (workout.missed) {
+                infoDiv.innerHTML = '<p style="color: var(--danger); text-align: center;">❌ День пропущен</p>';
+                return;
+            }
+
+            const dateObj = new Date(selectedDate);
+            const setsHTML = workout.sets.map((s, i) => `<div style="padding: 8px; background: var(--bg); border-radius: 8px; margin: 4px 0;"><strong>Подход ${i + 1}:</strong> ${s} отжиманий</div>`).join('');
+
+            infoDiv.innerHTML = `<div style="text-align: center;"><p style="font-size: 0.9em; color: var(--text-light);">${dateObj.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p><p style="font-size: 1.4em; font-weight: 800; color: var(--success); margin: 8px 0;">✅ ${workout.total} отжиманий</p>${workout.time ? `<p style="font-size: 0.9em; color: var(--text-light);">⏰ ${workout.time}</p>` : ''}</div><div style="margin-top: 12px;">${setsHTML}</div>`;
         }
 
-        function nextMonth() {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            renderCalendar();
-        }
+        function renderChart() {
+            const chart = document.getElementById('chart');
+            const today = new Date();
+            const start = new Date(today);
+            start.setDate(today.getDate() - 13);
 
-        function clearData() {
-            if (confirm('Вы уверены? Это удалит все данные.')) {
-                localStorage.clear();
-                workoutData = {};
-                selectedDate = null;
-                document.getElementById('selectedDate').textContent = 'Выберите дату в календаре';
-                renderCalendar();
-                renderWorkoutList();
+            chart.innerHTML = '';
+            
+            let maxPushups = 50;
+            for (let i = 0; i < 14; i++) {
+                const date = new Date(start);
+                date.setDate(start.getDate() + i);
+                const dateStr = date.toDateString();
+                const workout = data.workouts.find(w => w.date === dateStr);
+                const total = workout?.total || 0;
+                if (total > maxPushups) maxPushups = total;
+            }
+
+            for (let i = 0; i < 14; i++) {
+                const date = new Date(start);
+                date.setDate(start.getDate() + i);
+                const dateStr = date.toDateString();
+                const workout = data.workouts.find(w => w.date === dateStr);
+                const total = workout?.total || 0;
+                
+                const barHeight = total > 0 ? Math.max(20, Math.round((total / maxPushups) * 80)) : 5;
+                const bgColor = total >= 50 ? 'var(--success)' : total > 0 ? 'var(--primary)' : '#ddd';
+
+                const bar = document.createElement('div');
+                bar.style.cssText = `display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-height: 120px; gap: 6px; cursor: pointer;`;
+                bar.innerHTML = `<div title="${total} отжиманий" style="width: 100%; height: ${barHeight}px; background: ${bgColor}; border-radius: 4px 4px 0 0;"></div><p style="font-size: 0.75em; color: var(--text-light); margin: 0; font-weight: 600; word-break: break-word;">${date.getDate()}</p>`;
+                bar.onclick = () => selectDate(dateStr);
+                chart.appendChild(bar);
             }
         }
 
-        renderCalendar();
-        renderWorkoutList();
+        function updateStats() {
+            const total = data.workouts.reduce((sum, w) => sum + (w.total || 0), 0);
+            const success = data.workouts.filter(w => w.total >= 50).length;
+            const avgPerDay = data.workouts.length > 0 ? Math.round(total / data.workouts.length) : 0;
+
+            let streak = 0;
+            let current = new Date();
+            for (let i = 0; i < 100; i++) {
+                const dateStr = current.toDateString();
+                const workout = data.workouts.find(w => w.date === dateStr);
+                if (workout && workout.total >= 50 && !workout.missed) {
+                    streak++;
+                } else if (!workout) {
+                    break;
+                }
+                current.setDate(current.getDate() - 1);
+            }
+
+            const lastWeight = data.weights.length > 0 ? data.weights[data.weights.length - 1] : null;
+            const weightInfo = document.getElementById('weightInfo');
+            if (lastWeight) {
+                weightInfo.innerHTML = `<p style="margin: 0;"><strong>${lastWeight.weight} кг</strong></p><p style="font-size: 0.85em; color: var(--text-light); margin: 4px 0;">от ${new Date(lastWeight.date).toLocaleDateString('ru-RU')}</p>`;
+            }
+
+            document.getElementById('totalPushups').textContent = total.toLocaleString();
+            document.getElementById('streak').textContent = streak;
+            document.getElementById('successDays').textContent = success;
+            document.getElementById('avgPerDay').textContent = avgPerDay;
+
+            renderChart();
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            initFirebase();
+        });
     </script>
 </body>
 </html>
