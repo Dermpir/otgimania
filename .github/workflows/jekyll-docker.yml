@@ -21,18 +21,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Build
-        run: echo "Building..."
-        # Ваши команды сборки здесь
+      - name: Build site
+        run: |
+          # Ваши команды сборки здесь
+          echo "Site built successfully"
 
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '.'  # Или путь к вашей папке
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -41,3 +43,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          timeout: 600000
+          error_count: 10
+          reporting_interval: 5000
