@@ -686,7 +686,7 @@
             console.log('firebaseRegister called');
 
             if (!initFirebase()) {
-                showFirebaseError('Firebase недоступен. Попробуйте позже.');
+                showFirebaseError('Firebase недоступен');
                 return;
             }
 
@@ -713,7 +713,32 @@
                     console.log('✅ User created:', userCredential.user.uid);
                     firebaseUser = userCredential.user;
                     currentUser = firebaseUser.uid;
-                    showFirebaseError('✅ Регистрация успешна! Нажмите "Начать"');
+                    useFirebase = true;
+
+                    // ОТПРАВЛЯЕМ EMAIL ПОДТВЕРЖДЕНИЯ
+                    firebaseUser.sendEmailVerification()
+                        .then(() => {
+                            console.log('✅ Email подтверждения отправлен');
+                            showFirebaseError('✅ Аккаунт создан! Письмо отправлено на ' + email);
+
+                            // АВТОМАТИЧЕСКИЙ ПЕРЕХОД
+                            setTimeout(() => {
+                                document.getElementById('authSection').classList.add('hidden');
+                                document.getElementById('appSection').classList.remove('hidden');
+                                loadFirebaseData();
+                            }, 2000);
+                        })
+                        .catch(error => {
+                            console.error('Error sending email:', error);
+                            showFirebaseError('✅ Аккаунт создан! (Ошибка при отправке письма)');
+
+                            setTimeout(() => {
+                                document.getElementById('authSection').classList.add('hidden');
+                                document.getElementById('appSection').classList.remove('hidden');
+                                loadFirebaseData();
+                            }, 2000);
+                        });
+
                     if (registerBtn) registerBtn.disabled = false;
                 })
                 .catch(error => {
@@ -732,6 +757,7 @@
                     if (registerBtn) registerBtn.disabled = false;
                 });
         }
+
 
 
         function firebaseLogin() {
@@ -760,8 +786,12 @@
                     console.log('✅ User signed in:', userCredential.user.uid);
                     firebaseUser = userCredential.user;
                     currentUser = firebaseUser.uid;
-                    showFirebaseError('✅ Вход успешен! Нажмите "Начать"');
-                    if (loginBtn) loginBtn.disabled = false;
+                    useFirebase = true;
+
+                    // АВТОМАТИЧЕСКИЙ ПЕРЕХОД
+                    document.getElementById('authSection').classList.add('hidden');
+                    document.getElementById('appSection').classList.remove('hidden');
+                    loadFirebaseData();
                 })
                 .catch(error => {
                     console.error('❌ Login error:', error.code, error.message);
@@ -777,7 +807,6 @@
                     if (loginBtn) loginBtn.disabled = false;
                 });
         }
-
 
         function updateSyncStatus(status, type = 'synced') {
             const statusDiv = document.getElementById('syncStatus');
