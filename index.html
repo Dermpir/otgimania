@@ -497,688 +497,690 @@
                 <button onclick="setAuthMode('firebase')">☁️ Firebase</button>
             </div>
 
-            <div id="firebaseAuthSection" class="hidden" style="margin-bottom: 16px;">
+            <div id="firebaseAuthSection" class="hidden">
                 <input type="email" id="firebaseEmail" placeholder="Email">
                 <input type="password" id="firebasePassword" placeholder="Пароль" style="margin-top: 12px;">
+                <div id="firebaseMessage" class="hidden error-message" style="margin-top: 12px;"></div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
-                    <button class="btn btn-primary btn-small" onclick="firebaseRegister()">Регистрация</button>
-                    <button class="btn btn-primary btn-small" onclick="firebaseLogin()">Вход</button>
-                </div>
-                <div id="firebaseAuthMessage" style="margin-top: 12px; color: var(--text-light); font-size: 0.9em;">
+                    <button class="btn btn-primary btn-small" id="registerBtn"
+                        onclick="firebaseRegister()">Регистрация</button>
+                    <button class="btn btn-primary btn-small" id="loginBtn" onclick="firebaseLogin()">Вход</button>
                 </div>
             </div>
 
-            <button class="btn btn-primary" onclick="startApp()" style="margin-top: 12px;">Начать</button>
-            <p id="authMessage" style="margin-top: 12px; color: var(--text-light); font-size: 0.9em;"></p>
-        </div>
 
 
-        <!-- Основное приложение -->
-        <div id="appSection" class="hidden">
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 8px; flex-wrap: wrap;">
-                <div id="syncStatus"></div>
-                <button class="btn btn-danger btn-small" onclick="logout()"
-                    style="width: auto; padding: 8px 12px; white-space: nowrap;">Выход</button>
-            </div>
-
-
-            <div class="card">
-                <div class="section-title">📅 Календарь тренировок</div>
-                <div class="month-header">
-                    <div class="month-nav">
-                        <button onclick="prevMonth()">◀</button>
-                        <button onclick="nextMonth()">▶</button>
-                    </div>
-                    <div class="month-name" id="monthName"></div>
-                </div>
-                <div class="calendar" id="calendar"></div>
-            </div>
-
-
-            <div class="card">
-                <div class="section-title">⚡ Запишите тренировку</div>
+            <!-- Основное приложение -->
+            <div id="appSection" class="hidden">
                 <div
-                    style="background: var(--bg); padding: 12px; border-radius: 10px; margin-bottom: 16px; text-align: center;">
-                    <p style="color: var(--text-light); font-size: 0.9em; margin: 0;">Выбранная дата:</p>
-                    <p style="color: var(--text); font-weight: 700; margin: 4px 0; word-break: break-word;"
-                        id="selectedDateDisplay">-</p>
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 8px; flex-wrap: wrap;">
+                    <div id="syncStatus"></div>
+                    <button class="btn btn-danger btn-small" onclick="logout()"
+                        style="width: auto; padding: 8px 12px; white-space: nowrap;">Выход</button>
                 </div>
-                <div class="input-group">
-                    <input type="time" id="workoutTime" placeholder="⏰ Время">
-                    <div id="setsContainer">
-                        <div class="set-row">
-                            <input type="number" class="set-input" placeholder="Повторения подхода 1" min="0">
-                            <button class="delete-btn" onclick="deleteSet(this)">❌</button>
+
+
+                <div class="card">
+                    <div class="section-title">📅 Календарь тренировок</div>
+                    <div class="month-header">
+                        <div class="month-nav">
+                            <button onclick="prevMonth()">◀</button>
+                            <button onclick="nextMonth()">▶</button>
+                        </div>
+                        <div class="month-name" id="monthName"></div>
+                    </div>
+                    <div class="calendar" id="calendar"></div>
+                </div>
+
+
+                <div class="card">
+                    <div class="section-title">⚡ Запишите тренировку</div>
+                    <div
+                        style="background: var(--bg); padding: 12px; border-radius: 10px; margin-bottom: 16px; text-align: center;">
+                        <p style="color: var(--text-light); font-size: 0.9em; margin: 0;">Выбранная дата:</p>
+                        <p style="color: var(--text); font-weight: 700; margin: 4px 0; word-break: break-word;"
+                            id="selectedDateDisplay">-</p>
+                    </div>
+                    <div class="input-group">
+                        <input type="time" id="workoutTime" placeholder="⏰ Время">
+                        <div id="setsContainer">
+                            <div class="set-row">
+                                <input type="number" class="set-input" placeholder="Повторения подхода 1" min="0">
+                                <button class="delete-btn" onclick="deleteSet(this)">❌</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-small" onclick="addSet()">➕ Добавить подход</button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveWorkout()">✅ Записать</button>
+                        <button class="btn btn-danger" onclick="markMissed()">❌ Пропуск</button>
+                    </div>
+                </div>
+
+
+                <div class="card">
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-value" id="totalPushups">0</div>
+                            <div class="stat-label">Всего отжиманий</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="streak">0</div>
+                            <div class="stat-label">Серия дней</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="successDays">0</div>
+                            <div class="stat-label">Успешных дней</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="avgPerDay">0</div>
+                            <div class="stat-label">В день (средняя)</div>
                         </div>
                     </div>
-                    <button class="btn btn-primary btn-small" onclick="addSet()">➕ Добавить подход</button>
                 </div>
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="saveWorkout()">✅ Записать</button>
-                    <button class="btn btn-danger" onclick="markMissed()">❌ Пропуск</button>
-                </div>
-            </div>
 
 
-            <div class="card">
-                <div class="stats">
-                    <div class="stat">
-                        <div class="stat-value" id="totalPushups">0</div>
-                        <div class="stat-label">Всего отжиманий</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="streak">0</div>
-                        <div class="stat-label">Серия дней</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="successDays">0</div>
-                        <div class="stat-label">Успешных дней</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="avgPerDay">0</div>
-                        <div class="stat-label">В день (средняя)</div>
+                <div class="card">
+                    <div class="section-title">📊 История выбранной даты</div>
+                    <div id="selectedDateInfo">
+                        <p style="color: var(--text-light); text-align: center;">Выберите дату в календаре</p>
                     </div>
                 </div>
-            </div>
 
 
-            <div class="card">
-                <div class="section-title">📊 История выбранной даты</div>
-                <div id="selectedDateInfo">
-                    <p style="color: var(--text-light); text-align: center;">Выберите дату в календаре</p>
+                <div class="card">
+                    <div class="section-title">⚖️ Вес</div>
+                    <div class="input-group">
+                        <input type="number" id="weight" placeholder="Вес, кг" step="0.1">
+                        <button class="btn btn-primary btn-small" onclick="saveWeight()">Сохранить вес</button>
+                    </div>
+                    <div id="weightInfo"
+                        style="margin-top: 12px; padding: 12px; background: var(--bg); border-radius: 10px; text-align: center;">
+                        <p style="color: var(--text-light); font-size: 0.9em;">Нет записей веса</p>
+                    </div>
                 </div>
-            </div>
 
 
-            <div class="card">
-                <div class="section-title">⚖️ Вес</div>
-                <div class="input-group">
-                    <input type="number" id="weight" placeholder="Вес, кг" step="0.1">
-                    <button class="btn btn-primary btn-small" onclick="saveWeight()">Сохранить вес</button>
+                <div class="card">
+                    <div class="section-title">📈 График отжиманий (последние 14 дней)</div>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;" id="chart"></div>
                 </div>
-                <div id="weightInfo"
-                    style="margin-top: 12px; padding: 12px; background: var(--bg); border-radius: 10px; text-align: center;">
-                    <p style="color: var(--text-light); font-size: 0.9em;">Нет записей веса</p>
-                </div>
-            </div>
-
-
-            <div class="card">
-                <div class="section-title">📈 График отжиманий (последние 14 дней)</div>
-                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;" id="chart"></div>
             </div>
         </div>
-    </div>
 
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.compat.js"></script>
 
 
-    <script>
-        // Firebase конфигурация
-        const firebaseConfig = {
-            apiKey: "AIzaSyCF6dkvdzAk2LqhjkX3VYos9xwHHAK7D5s",
-            authDomain: "pushups-tracker-8ee95.firebaseapp.com",
-            databaseURL: "https://pushups-tracker-8ee95-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "pushups-tracker-8ee95",
-            storageBucket: "pushups-tracker-8ee95.firebasestorage.app",
-            messagingSenderId: "546118879090",
-            appId: "1:546118879090:web:8592103d5f94952ab3bfeb"
-        };
+        <script>
+            // Firebase конфигурация
+            const firebaseConfig = {
+                apiKey: "AIzaSyCF6dkvdzAk2LqhjkX3VYos9xwHHAK7D5s",
+                authDomain: "pushups-tracker-8ee95.firebaseapp.com",
+                databaseURL: "https://pushups-tracker-8ee95-default-rtdb.europe-west1.firebasedatabase.app",
+                projectId: "pushups-tracker-8ee95",
+                storageBucket: "pushups-tracker-8ee95.firebasestorage.app",
+                messagingSenderId: "546118879090",
+                appId: "1:546118879090:web:8592103d5f94952ab3bfeb"
+            };
 
 
-        // Переменные приложения
-        let currentUser = null;
-        let data = { workouts: [], weights: [] };
-        let selectedDate = new Date().toDateString();
-        let currentMonth = new Date();
-        let useFirebase = false;
-        let firebaseUser = null;
-        let authMode = 'local';
-        let syncingInProgress = false;
+            // Переменные приложения
+            let currentUser = null;
+            let data = { workouts: [], weights: [] };
+            let selectedDate = new Date().toDateString();
+            let currentMonth = new Date();
+            let useFirebase = false;
+            let firebaseUser = null;
+            let authMode = 'local';
+            let syncingInProgress = false;
 
-        // Инициализация Firebase (если используется)
-        let firebaseInitialized = false;
-        function initFirebase() {
-            if (window.firebase && window.firebase.apps.length === 0) {
-                try {
-                    firebase.initializeApp(firebaseConfig);
-                    console.log('✅ Firebase инициализирован');
-                    return true;
-                } catch (error) {
-                    console.error('❌ Ошибка инициализации:', error);
-                    return false;
+            // Инициализация Firebase (если используется)
+            let firebaseInitialized = false;
+            function initFirebase() {
+                if (window.firebase && window.firebase.apps.length === 0) {
+                    try {
+                        firebase.initializeApp(firebaseConfig);
+                        console.log('✅ Firebase инициализирован');
+                        return true;
+                    } catch (error) {
+                        console.error('❌ Ошибка инициализации:', error);
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            function setAuthMode(mode) {
+                authMode = mode;
+                useFirebase = mode === 'firebase';
+
+                document.querySelectorAll('#firebaseToggleAuth button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                event.target.classList.add('active');
+
+                const firebaseSection = document.getElementById('firebaseAuthSection');
+                if (useFirebase) {
+                    firebaseSection.classList.remove('hidden');
+                    document.getElementById('authUser').style.display = 'none';
+                } else {
+                    firebaseSection.classList.add('hidden');
+                    document.getElementById('authUser').style.display = 'block';
+                    document.getElementById('firebaseAuthMessage').textContent = '';
                 }
             }
-            return true;
-        }
 
-        function setAuthMode(mode) {
-            authMode = mode;
-            useFirebase = mode === 'firebase';
-
-            document.querySelectorAll('#firebaseToggleAuth button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
-            const firebaseSection = document.getElementById('firebaseAuthSection');
-            if (useFirebase) {
-                firebaseSection.classList.remove('hidden');
-                document.getElementById('authUser').style.display = 'none';
-            } else {
-                firebaseSection.classList.add('hidden');
-                document.getElementById('authUser').style.display = 'block';
-                document.getElementById('firebaseAuthMessage').textContent = '';
-            }
-        }
-
-        function showFirebaseError(message) {
-            const msgDiv = document.getElementById('firebaseMessage');
-            msgDiv.textContent = '❌ ' + message;
-            msgDiv.classList.remove('hidden');
-        }
-
-        function firebaseRegister() {
-            if (!initFirebase()) {
-                showFirebaseError('Firebase недоступен');
-                return;
+            function showFirebaseError(message) {
+                const msgDiv = document.getElementById('firebaseMessage');
+                if (!msgDiv) {
+                    console.error('Element firebaseMessage not found');
+                    alert(message);
+                    return;
+                }
+                msgDiv.textContent = message;
+                msgDiv.classList.remove('hidden');
             }
 
-            const email = document.getElementById('firebaseEmail').value.trim();
-            const password = document.getElementById('firebasePassword').value.trim();
+            function firebaseRegister() {
+                if (!initFirebase()) {
+                    showFirebaseError('Firebase недоступен');
+                    return;
+                }
 
-            if (!email || !password) {
-                showFirebaseError('Введите email и пароль');
-                return;
+                const email = document.getElementById('firebaseEmail').value.trim();
+                const password = document.getElementById('firebasePassword').value.trim();
+
+                if (!email || !password) {
+                    showFirebaseError('Введите email и пароль');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    showFirebaseError('Пароль должен быть не менее 6 символов');
+                    return;
+                }
+
+                const registerBtn = document.getElementById('registerBtn');
+                if (registerBtn) registerBtn.disabled = true;
+
+                firebase.auth().createUserWithEmailAndPassword(email, password)
+                    .then(userCredential => {
+                        firebaseUser = userCredential.user;
+                        currentUser = firebaseUser.uid;
+                        showFirebaseError('✅ Регистрация успешна! Нажмите "Начать"');
+                        if (registerBtn) registerBtn.disabled = false;
+                    })
+                    .catch(error => {
+                        let errorMsg = error.message;
+                        if (error.code === 'auth/email-already-in-use') {
+                            errorMsg = 'Этот email уже зарегистрирован';
+                        } else if (error.code === 'auth/invalid-email') {
+                            errorMsg = 'Некорректный email';
+                        } else if (error.code === 'auth/weak-password') {
+                            errorMsg = 'Слабый пароль (минимум 6 символов)';
+                        }
+                        showFirebaseError(errorMsg);
+                        if (registerBtn) registerBtn.disabled = false;
+                        console.error('Register error:', error);
+                    });
             }
 
-            if (password.length < 6) {
-                showFirebaseError('Пароль должен быть не менее 6 символов');
-                return;
+            function firebaseLogin() {
+                if (!initFirebase()) {
+                    showFirebaseError('Firebase недоступен');
+                    return;
+                }
+
+                const email = document.getElementById('firebaseEmail').value.trim();
+                const password = document.getElementById('firebasePassword').value.trim();
+
+                if (!email || !password) {
+                    showFirebaseError('Введите email и пароль');
+                    return;
+                }
+
+                const loginBtn = document.getElementById('loginBtn');
+                if (loginBtn) loginBtn.disabled = true;
+
+                firebase.auth().signInWithEmailAndPassword(email, password)
+                    .then(userCredential => {
+                        firebaseUser = userCredential.user;
+                        currentUser = firebaseUser.uid;
+                        showFirebaseError('✅ Вход успешен! Нажмите "Начать"');
+                        if (loginBtn) loginBtn.disabled = false;
+                    })
+                    .catch(error => {
+                        let errorMsg = error.message;
+                        if (error.code === 'auth/user-not-found') {
+                            errorMsg = 'Пользователь не найден';
+                        } else if (error.code === 'auth/wrong-password') {
+                            errorMsg = 'Неверный пароль';
+                        }
+                        showFirebaseError(errorMsg);
+                        if (loginBtn) loginBtn.disabled = false;
+                        console.error('Login error:', error);
+                    });
             }
 
-            document.getElementById('registerBtn').disabled = true;
+            function updateSyncStatus(status, type = 'synced') {
+                const statusDiv = document.getElementById('syncStatus');
+                if (!statusDiv) return;
 
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(userCredential => {
-                    firebaseUser = userCredential.user;
-                    currentUser = firebaseUser.uid;
-                    showFirebaseError('✅ Регистрация успешна! Нажмите "Начать"');
-                    document.getElementById('registerBtn').disabled = false;
-                })
-                .catch(error => {
-                    let errorMsg = error.message;
-                    if (error.code === 'auth/email-already-in-use') {
-                        errorMsg = 'Этот email уже зарегистрирован';
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorMsg = 'Некорректный email';
-                    } else if (error.code === 'auth/weak-password') {
-                        errorMsg = 'Слабый пароль (минимум 6 символов)';
-                    }
-                    showFirebaseError(errorMsg);
-                    document.getElementById('registerBtn').disabled = false;
-                    console.error('Register error:', error);
-                });
-        }
-
-
-        function firebaseLogin() {
-            if (!initFirebase()) {
-                showFirebaseError('Firebase недоступен');
-                return;
+                statusDiv.className = 'sync-status ' + type;
+                statusDiv.textContent = status;
             }
 
-            const email = document.getElementById('firebaseEmail').value.trim();
-            const password = document.getElementById('firebasePassword').value.trim();
-
-            if (!email || !password) {
-                showFirebaseError('Введите email и пароль');
-                return;
-            }
-
-            document.getElementById('loginBtn').disabled = true;
-
-            firebase.auth().signInWithEmailAndPassword(email, password)
-                .then(userCredential => {
-                    firebaseUser = userCredential.user;
-                    currentUser = firebaseUser.uid;
-                    showFirebaseError('✅ Вход успешен! Нажмите "Начать"');
-                    document.getElementById('loginBtn').disabled = false;
-                })
-                .catch(error => {
-                    let errorMsg = error.message;
-                    if (error.code === 'auth/user-not-found') {
-                        errorMsg = 'Пользователь не найден';
-                    } else if (error.code === 'auth/wrong-password') {
-                        errorMsg = 'Неверный пароль';
-                    }
-                    showFirebaseError(errorMsg);
-                    document.getElementById('loginBtn').disabled = false;
-                    console.error('Login error:', error);
-                });
-        }
-
-
-        function updateSyncStatus(status, type = 'synced') {
-            const statusDiv = document.getElementById('syncStatus');
-            if (!statusDiv) return;
-
-            statusDiv.className = 'sync-status ' + type;
-            statusDiv.textContent = status;
-        }
-
-        function loadUserData() {
-            if (useFirebase && firebaseUser) {
-                loadFirebaseData();
-            } else {
-                loadLocalData();
-            }
-        }
-
-        function loadLocalData() {
-            const storageKey = 'pushups_' + currentUser;
-            const stored = localStorage.getItem(storageKey);
-            if (stored) {
-                data = JSON.parse(stored);
-            } else {
-                data = { workouts: [], weights: [] };
-            }
-            renderMonth();
-            selectDate(selectedDate);
-            updateStats();
-            updateSyncStatus('📱 Локальное хранилище', 'synced');
-        }
-
-        function loadFirebaseData() {
-            if (!firebase.auth().currentUser) {
-                loadLocalData();
-                return;
-            }
-
-            const userId = firebase.auth().currentUser.uid;
-            updateSyncStatus('☁️ Загрузка...', 'syncing');
-
-            firebase.database().ref('users/' + userId).once('value')
-                .then(snapshot => {
-                    if (snapshot.exists()) {
-                        data = snapshot.val();
-                    } else {
-                        data = { workouts: [], weights: [] };
-                    }
-                    renderMonth();
-                    selectDate(selectedDate);
-                    updateStats();
-                    updateSyncStatus('☁️ Синхронизировано', 'synced');
-                })
-                .catch(error => {
-                    updateSyncStatus('❌ Ошибка загрузки', 'error');
-                    console.error('Load error:', error);
+            function loadUserData() {
+                if (useFirebase && firebaseUser) {
+                    loadFirebaseData();
+                } else {
                     loadLocalData();
-                });
-        }
-
-        function saveUserData() {
-            if (useFirebase && firebaseUser && firebaseInitialized) {
-                saveFirebaseData();
-            } else {
-                saveLocalData();
-            }
-        }
-
-        function saveLocalData() {
-            const storageKey = 'pushups_' + currentUser;
-            localStorage.setItem(storageKey, JSON.stringify(data));
-        }
-
-        function saveFirebaseData() {
-            if (!firebase.auth().currentUser) {
-                console.error('User not authenticated');
-                return;
+                }
             }
 
-            const userId = firebase.auth().currentUser.uid;
-            updateSyncStatus('☁️ Сохранение...', 'syncing');
+            function loadLocalData() {
+                const storageKey = 'pushups_' + currentUser;
+                const stored = localStorage.getItem(storageKey);
+                if (stored) {
+                    data = JSON.parse(stored);
+                } else {
+                    data = { workouts: [], weights: [] };
+                }
+                renderMonth();
+                selectDate(selectedDate);
+                updateStats();
+                updateSyncStatus('📱 Локальное хранилище', 'synced');
+            }
 
-            firebase.database().ref('users/' + userId).set(data)
-                .then(() => {
-                    updateSyncStatus('☁️ Синхронизировано', 'synced');
-                    console.log('Data saved to Firebase');
-                })
-                .catch(error => {
-                    updateSyncStatus('❌ Ошибка сохранения', 'error');
-                    console.error('Save error:', error);
+            function loadFirebaseData() {
+                if (!firebase.auth().currentUser) {
+                    loadLocalData();
+                    return;
+                }
+
+                const userId = firebase.auth().currentUser.uid;
+                updateSyncStatus('☁️ Загрузка...', 'syncing');
+
+                firebase.database().ref('users/' + userId).once('value')
+                    .then(snapshot => {
+                        if (snapshot.exists()) {
+                            data = snapshot.val();
+                        } else {
+                            data = { workouts: [], weights: [] };
+                        }
+                        renderMonth();
+                        selectDate(selectedDate);
+                        updateStats();
+                        updateSyncStatus('☁️ Синхронизировано', 'synced');
+                    })
+                    .catch(error => {
+                        updateSyncStatus('❌ Ошибка загрузки', 'error');
+                        console.error('Load error:', error);
+                        loadLocalData();
+                    });
+            }
+
+            function saveUserData() {
+                if (useFirebase && firebaseUser && firebaseInitialized) {
+                    saveFirebaseData();
+                } else {
                     saveLocalData();
-                });
-        }
+                }
+            }
 
-        function startApp() {
-            if (useFirebase) {
-                if (!firebaseUser || !currentUser) {
-                    document.getElementById('firebaseAuthMessage').textContent = '❌ Пожалуйста, авторизуйтесь';
+            function saveLocalData() {
+                const storageKey = 'pushups_' + currentUser;
+                localStorage.setItem(storageKey, JSON.stringify(data));
+            }
+
+            function saveFirebaseData() {
+                if (!firebase.auth().currentUser) {
+                    console.error('User not authenticated');
                     return;
                 }
-            } else {
-                const user = document.getElementById('authUser').value.trim();
-                if (!user) {
-                    document.getElementById('authMessage').textContent = '❌ Введите имя';
-                    return;
-                }
-                currentUser = user;
+
+                const userId = firebase.auth().currentUser.uid;
+                updateSyncStatus('☁️ Сохранение...', 'syncing');
+
+                firebase.database().ref('users/' + userId).set(data)
+                    .then(() => {
+                        updateSyncStatus('☁️ Синхронизировано', 'synced');
+                        console.log('Data saved to Firebase');
+                    })
+                    .catch(error => {
+                        updateSyncStatus('❌ Ошибка сохранения', 'error');
+                        console.error('Save error:', error);
+                        saveLocalData();
+                    });
             }
 
-            document.getElementById('authSection').classList.add('hidden');
-            document.getElementById('appSection').classList.remove('hidden');
-            loadUserData();
-        }
-
-        function logout() {
-            if (useFirebase && firebaseInitialized) {
-                firebase.auth().signOut().then(() => {
-                    firebaseUser = null;
-                    useFirebase = false;
-                });
-            }
-
-            currentUser = null;
-            useFirebase = false;
-            authMode = 'local';
-            document.getElementById('authSection').classList.remove('hidden');
-            document.getElementById('appSection').classList.add('hidden');
-            document.getElementById('authUser').value = '';
-            document.getElementById('firebaseEmail').value = '';
-            document.getElementById('firebasePassword').value = '';
-            document.getElementById('authMessage').textContent = '';
-            document.getElementById('firebaseAuthMessage').textContent = '';
-
-            const buttons = document.querySelectorAll('#firebaseToggleAuth button');
-            if (buttons.length > 0) {
-                buttons[0].classList.add('active');
-                buttons.forEach((btn, i) => {
-                    if (i > 0) btn.classList.remove('active');
-                });
-            }
-
-            document.getElementById('authUser').style.display = 'block';
-            document.getElementById('firebaseAuthSection').classList.add('hidden');
-        }
-
-        function prevMonth() {
-            currentMonth.setMonth(currentMonth.getMonth() - 1);
-            renderMonth();
-        }
-
-        function nextMonth() {
-            currentMonth.setMonth(currentMonth.getMonth() + 1);
-            renderMonth();
-        }
-
-        function renderMonth() {
-            const year = currentMonth.getFullYear();
-            const month = currentMonth.getMonth();
-            const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-            document.getElementById('monthName').textContent = `${monthNames[month]} ${year}`;
-
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const daysInMonth = lastDay.getDate();
-            const startingDayOfWeek = (firstDay.getDay() + 6) % 7;
-
-            const calendar = document.getElementById('calendar');
-            calendar.innerHTML = '';
-
-            ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(day => {
-                const header = document.createElement('div');
-                header.className = 'weekday-header';
-                header.textContent = day;
-                calendar.appendChild(header);
-            });
-
-            const prevMonthLastDay = new Date(year, month, 0).getDate();
-            for (let i = startingDayOfWeek - 1; i >= 0; i--) {
-                const day = document.createElement('div');
-                day.className = 'calendar-day other-month';
-                day.textContent = prevMonthLastDay - i;
-                calendar.appendChild(day);
-            }
-
-            const today = new Date();
-            for (let day = 1; day <= daysInMonth; day++) {
-                const date = new Date(year, month, day);
-                const dateStr = date.toDateString();
-
-                const dayElement = document.createElement('div');
-                dayElement.className = 'calendar-day';
-                dayElement.textContent = day;
-                dayElement.onclick = () => selectDate(dateStr);
-
-                const workout = data.workouts.find(w => w.date === dateStr);
-
-                if (dateStr === today.toDateString()) {
-                    dayElement.classList.add('today');
-                }
-
-                if (workout) {
-                    if (workout.missed) {
-                        dayElement.classList.add('missed');
-                    } else if (workout.total >= 50) {
-                        dayElement.classList.add('trained');
-                    } else {
-                        dayElement.classList.add('partial');
+            function startApp() {
+                if (useFirebase) {
+                    if (!firebaseUser || !currentUser) {
+                        document.getElementById('firebaseAuthMessage').textContent = '❌ Пожалуйста, авторизуйтесь';
+                        return;
                     }
+                } else {
+                    const user = document.getElementById('authUser').value.trim();
+                    if (!user) {
+                        document.getElementById('authMessage').textContent = '❌ Введите имя';
+                        return;
+                    }
+                    currentUser = user;
                 }
 
-                if (dateStr === selectedDate) {
-                    dayElement.classList.add('selected');
+                document.getElementById('authSection').classList.add('hidden');
+                document.getElementById('appSection').classList.remove('hidden');
+                loadUserData();
+            }
+
+            function logout() {
+                if (useFirebase && firebaseInitialized) {
+                    firebase.auth().signOut().then(() => {
+                        firebaseUser = null;
+                        useFirebase = false;
+                    });
                 }
 
-                calendar.appendChild(dayElement);
+                currentUser = null;
+                useFirebase = false;
+                authMode = 'local';
+                document.getElementById('authSection').classList.remove('hidden');
+                document.getElementById('appSection').classList.add('hidden');
+                document.getElementById('authUser').value = '';
+                document.getElementById('firebaseEmail').value = '';
+                document.getElementById('firebasePassword').value = '';
+                document.getElementById('authMessage').textContent = '';
+                document.getElementById('firebaseAuthMessage').textContent = '';
+
+                const buttons = document.querySelectorAll('#firebaseToggleAuth button');
+                if (buttons.length > 0) {
+                    buttons[0].classList.add('active');
+                    buttons.forEach((btn, i) => {
+                        if (i > 0) btn.classList.remove('active');
+                    });
+                }
+
+                document.getElementById('authUser').style.display = 'block';
+                document.getElementById('firebaseAuthSection').classList.add('hidden');
             }
 
-            const totalCells = calendar.children.length;
-            const remainingCells = 42 - totalCells;
-            for (let i = 1; i <= remainingCells; i++) {
-                const day = document.createElement('div');
-                day.className = 'calendar-day other-month';
-                day.textContent = i;
-                calendar.appendChild(day);
+            function prevMonth() {
+                currentMonth.setMonth(currentMonth.getMonth() - 1);
+                renderMonth();
             }
-        }
 
-        function selectDate(dateStr) {
-            selectedDate = dateStr;
-            const workout = data.workouts.find(w => w.date === dateStr);
+            function nextMonth() {
+                currentMonth.setMonth(currentMonth.getMonth() + 1);
+                renderMonth();
+            }
 
-            const dateObj = new Date(dateStr);
-            document.getElementById('selectedDateDisplay').textContent = dateObj.toLocaleDateString('ru-RU', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+            function renderMonth() {
+                const year = currentMonth.getFullYear();
+                const month = currentMonth.getMonth();
+                const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+                document.getElementById('monthName').textContent = `${monthNames[month]} ${year}`;
 
-            renderMonth();
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const daysInMonth = lastDay.getDate();
+                const startingDayOfWeek = (firstDay.getDay() + 6) % 7;
 
-            const setsContainer = document.getElementById('setsContainer');
-            setsContainer.innerHTML = '<div class="set-row"><input type="number" class="set-input" placeholder="Повторения подхода 1" min="0"><button class="delete-btn" onclick="deleteSet(this)">❌</button></div>';
-            document.getElementById('workoutTime').value = '';
+                const calendar = document.getElementById('calendar');
+                calendar.innerHTML = '';
 
-            if (workout && workout.sets && workout.sets.length > 0) {
-                setsContainer.innerHTML = '';
-                workout.sets.forEach((sets, index) => {
-                    const row = document.createElement('div');
-                    row.className = 'set-row';
-                    row.innerHTML = `<input type="number" class="set-input" placeholder="Повторения подхода ${index + 1}" min="0" value="${sets}"><button class="delete-btn" onclick="deleteSet(this)">❌</button>`;
-                    setsContainer.appendChild(row);
+                ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(day => {
+                    const header = document.createElement('div');
+                    header.className = 'weekday-header';
+                    header.textContent = day;
+                    calendar.appendChild(header);
                 });
-                document.getElementById('workoutTime').value = workout.time || '';
-            }
 
-            displayWorkoutInfo();
-            updateStats();
-        }
-
-        function addSet() {
-            const setsContainer = document.getElementById('setsContainer');
-            const setCount = setsContainer.children.length + 1;
-            const row = document.createElement('div');
-            row.className = 'set-row';
-            row.innerHTML = `<input type="number" class="set-input" placeholder="Повторения подхода ${setCount}" min="0"><button class="delete-btn" onclick="deleteSet(this)">❌</button>`;
-            setsContainer.appendChild(row);
-        }
-
-        function deleteSet(btn) {
-            btn.parentElement.remove();
-        }
-
-        function saveWorkout() {
-            const inputs = document.querySelectorAll('.set-input');
-            const sets = Array.from(inputs).map(input => parseInt(input.value) || 0);
-            const total = sets.reduce((a, b) => a + b, 0);
-            const time = document.getElementById('workoutTime').value;
-
-            const existingIdx = data.workouts.findIndex(w => w.date === selectedDate);
-            const workout = { date: selectedDate, time, sets, total, missed: false };
-
-            if (existingIdx >= 0) {
-                data.workouts[existingIdx] = workout;
-            } else {
-                data.workouts.push(workout);
-            }
-
-            saveUserData();
-            renderMonth();
-            updateStats();
-            alert(total >= 50 ? `✅ Отлично! ${total} отжиманий!` : `📝 Записано ${total} отжиманий`);
-        }
-
-        function markMissed() {
-            const existingIdx = data.workouts.findIndex(w => w.date === selectedDate);
-            const workout = { date: selectedDate, missed: true, total: 0, sets: [], time: '' };
-
-            if (existingIdx >= 0) {
-                data.workouts[existingIdx] = workout;
-            } else {
-                data.workouts.push(workout);
-            }
-
-            saveUserData();
-            renderMonth();
-            updateStats();
-            alert('❌ День отмечен как пропуск');
-        }
-
-        function saveWeight() {
-            const weight = parseFloat(document.getElementById('weight').value);
-            if (!weight || weight <= 0) {
-                alert('Введите вес');
-                return;
-            }
-
-            const existingIdx = data.weights.findIndex(w => w.date === selectedDate);
-            if (existingIdx >= 0) {
-                data.weights[existingIdx] = { date: selectedDate, weight };
-            } else {
-                data.weights.push({ date: selectedDate, weight });
-            }
-
-            saveUserData();
-            updateStats();
-            document.getElementById('weight').value = '';
-            alert('✅ Вес сохранён');
-        }
-
-        function displayWorkoutInfo() {
-            const workout = data.workouts.find(w => w.date === selectedDate);
-            const infoDiv = document.getElementById('selectedDateInfo');
-
-            if (!workout) {
-                infoDiv.innerHTML = '<p style="color: var(--text-light); text-align: center;">Нет данных</p>';
-                return;
-            }
-
-            if (workout.missed) {
-                infoDiv.innerHTML = '<p style="color: var(--danger); text-align: center;">❌ День пропущен</p>';
-                return;
-            }
-
-            const dateObj = new Date(selectedDate);
-            const setsHTML = workout.sets.map((s, i) => `<div style="padding: 8px; background: var(--bg); border-radius: 8px; margin: 4px 0;"><strong>Подход ${i + 1}:</strong> ${s} отжиманий</div>`).join('');
-
-            infoDiv.innerHTML = `<div style="text-align: center;"><p style="font-size: 0.9em; color: var(--text-light);">${dateObj.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p><p style="font-size: 1.4em; font-weight: 800; color: var(--success); margin: 8px 0;">✅ ${workout.total} отжиманий</p>${workout.time ? `<p style="font-size: 0.9em; color: var(--text-light);">⏰ ${workout.time}</p>` : ''}</div><div style="margin-top: 12px;">${setsHTML}</div>`;
-        }
-
-        function renderChart() {
-            const chart = document.getElementById('chart');
-            const today = new Date();
-            const start = new Date(today);
-            start.setDate(today.getDate() - 13);
-
-            chart.innerHTML = '';
-
-            let maxPushups = 50;
-            for (let i = 0; i < 14; i++) {
-                const date = new Date(start);
-                date.setDate(start.getDate() + i);
-                const dateStr = date.toDateString();
-                const workout = data.workouts.find(w => w.date === dateStr);
-                const total = workout?.total || 0;
-                if (total > maxPushups) maxPushups = total;
-            }
-
-            for (let i = 0; i < 14; i++) {
-                const date = new Date(start);
-                date.setDate(start.getDate() + i);
-                const dateStr = date.toDateString();
-                const workout = data.workouts.find(w => w.date === dateStr);
-                const total = workout?.total || 0;
-
-                const barHeight = total > 0 ? Math.max(20, Math.round((total / maxPushups) * 80)) : 5;
-                const bgColor = total >= 50 ? 'var(--success)' : total > 0 ? 'var(--primary)' : '#ddd';
-
-                const bar = document.createElement('div');
-                bar.style.cssText = `display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-height: 120px; gap: 6px; cursor: pointer;`;
-                bar.innerHTML = `<div title="${total} отжиманий" style="width: 100%; height: ${barHeight}px; background: ${bgColor}; border-radius: 4px 4px 0 0;"></div><p style="font-size: 0.75em; color: var(--text-light); margin: 0; font-weight: 600; word-break: break-word;">${date.getDate()}</p>`;
-                bar.onclick = () => selectDate(dateStr);
-                chart.appendChild(bar);
-            }
-        }
-
-        function updateStats() {
-            const total = data.workouts.reduce((sum, w) => sum + (w.total || 0), 0);
-            const success = data.workouts.filter(w => w.total >= 50).length;
-            const avgPerDay = data.workouts.length > 0 ? Math.round(total / data.workouts.length) : 0;
-
-            let streak = 0;
-            let current = new Date();
-            for (let i = 0; i < 100; i++) {
-                const dateStr = current.toDateString();
-                const workout = data.workouts.find(w => w.date === dateStr);
-                if (workout && workout.total >= 50 && !workout.missed) {
-                    streak++;
-                } else if (!workout) {
-                    break;
+                const prevMonthLastDay = new Date(year, month, 0).getDate();
+                for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+                    const day = document.createElement('div');
+                    day.className = 'calendar-day other-month';
+                    day.textContent = prevMonthLastDay - i;
+                    calendar.appendChild(day);
                 }
-                current.setDate(current.getDate() - 1);
+
+                const today = new Date();
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const date = new Date(year, month, day);
+                    const dateStr = date.toDateString();
+
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day';
+                    dayElement.textContent = day;
+                    dayElement.onclick = () => selectDate(dateStr);
+
+                    const workout = data.workouts.find(w => w.date === dateStr);
+
+                    if (dateStr === today.toDateString()) {
+                        dayElement.classList.add('today');
+                    }
+
+                    if (workout) {
+                        if (workout.missed) {
+                            dayElement.classList.add('missed');
+                        } else if (workout.total >= 50) {
+                            dayElement.classList.add('trained');
+                        } else {
+                            dayElement.classList.add('partial');
+                        }
+                    }
+
+                    if (dateStr === selectedDate) {
+                        dayElement.classList.add('selected');
+                    }
+
+                    calendar.appendChild(dayElement);
+                }
+
+                const totalCells = calendar.children.length;
+                const remainingCells = 42 - totalCells;
+                for (let i = 1; i <= remainingCells; i++) {
+                    const day = document.createElement('div');
+                    day.className = 'calendar-day other-month';
+                    day.textContent = i;
+                    calendar.appendChild(day);
+                }
             }
 
-            const lastWeight = data.weights.length > 0 ? data.weights[data.weights.length - 1] : null;
-            const weightInfo = document.getElementById('weightInfo');
-            if (lastWeight) {
-                weightInfo.innerHTML = `<p style="margin: 0;"><strong>${lastWeight.weight} кг</strong></p><p style="font-size: 0.85em; color: var(--text-light); margin: 4px 0;">от ${new Date(lastWeight.date).toLocaleDateString('ru-RU')}</p>`;
+            function selectDate(dateStr) {
+                selectedDate = dateStr;
+                const workout = data.workouts.find(w => w.date === dateStr);
+
+                const dateObj = new Date(dateStr);
+                document.getElementById('selectedDateDisplay').textContent = dateObj.toLocaleDateString('ru-RU', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+
+                renderMonth();
+
+                const setsContainer = document.getElementById('setsContainer');
+                setsContainer.innerHTML = '<div class="set-row"><input type="number" class="set-input" placeholder="Повторения подхода 1" min="0"><button class="delete-btn" onclick="deleteSet(this)">❌</button></div>';
+                document.getElementById('workoutTime').value = '';
+
+                if (workout && workout.sets && workout.sets.length > 0) {
+                    setsContainer.innerHTML = '';
+                    workout.sets.forEach((sets, index) => {
+                        const row = document.createElement('div');
+                        row.className = 'set-row';
+                        row.innerHTML = `<input type="number" class="set-input" placeholder="Повторения подхода ${index + 1}" min="0" value="${sets}"><button class="delete-btn" onclick="deleteSet(this)">❌</button>`;
+                        setsContainer.appendChild(row);
+                    });
+                    document.getElementById('workoutTime').value = workout.time || '';
+                }
+
+                displayWorkoutInfo();
+                updateStats();
             }
 
-            document.getElementById('totalPushups').textContent = total.toLocaleString();
-            document.getElementById('streak').textContent = streak;
-            document.getElementById('successDays').textContent = success;
-            document.getElementById('avgPerDay').textContent = avgPerDay;
+            function addSet() {
+                const setsContainer = document.getElementById('setsContainer');
+                const setCount = setsContainer.children.length + 1;
+                const row = document.createElement('div');
+                row.className = 'set-row';
+                row.innerHTML = `<input type="number" class="set-input" placeholder="Повторения подхода ${setCount}" min="0"><button class="delete-btn" onclick="deleteSet(this)">❌</button>`;
+                setsContainer.appendChild(row);
+            }
 
-            renderChart();
-        }
+            function deleteSet(btn) {
+                btn.parentElement.remove();
+            }
 
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', function () {
-            initFirebase();
-        });
-    </script>
+            function saveWorkout() {
+                const inputs = document.querySelectorAll('.set-input');
+                const sets = Array.from(inputs).map(input => parseInt(input.value) || 0);
+                const total = sets.reduce((a, b) => a + b, 0);
+                const time = document.getElementById('workoutTime').value;
+
+                const existingIdx = data.workouts.findIndex(w => w.date === selectedDate);
+                const workout = { date: selectedDate, time, sets, total, missed: false };
+
+                if (existingIdx >= 0) {
+                    data.workouts[existingIdx] = workout;
+                } else {
+                    data.workouts.push(workout);
+                }
+
+                saveUserData();
+                renderMonth();
+                updateStats();
+                alert(total >= 50 ? `✅ Отлично! ${total} отжиманий!` : `📝 Записано ${total} отжиманий`);
+            }
+
+            function markMissed() {
+                const existingIdx = data.workouts.findIndex(w => w.date === selectedDate);
+                const workout = { date: selectedDate, missed: true, total: 0, sets: [], time: '' };
+
+                if (existingIdx >= 0) {
+                    data.workouts[existingIdx] = workout;
+                } else {
+                    data.workouts.push(workout);
+                }
+
+                saveUserData();
+                renderMonth();
+                updateStats();
+                alert('❌ День отмечен как пропуск');
+            }
+
+            function saveWeight() {
+                const weight = parseFloat(document.getElementById('weight').value);
+                if (!weight || weight <= 0) {
+                    alert('Введите вес');
+                    return;
+                }
+
+                const existingIdx = data.weights.findIndex(w => w.date === selectedDate);
+                if (existingIdx >= 0) {
+                    data.weights[existingIdx] = { date: selectedDate, weight };
+                } else {
+                    data.weights.push({ date: selectedDate, weight });
+                }
+
+                saveUserData();
+                updateStats();
+                document.getElementById('weight').value = '';
+                alert('✅ Вес сохранён');
+            }
+
+            function displayWorkoutInfo() {
+                const workout = data.workouts.find(w => w.date === selectedDate);
+                const infoDiv = document.getElementById('selectedDateInfo');
+
+                if (!workout) {
+                    infoDiv.innerHTML = '<p style="color: var(--text-light); text-align: center;">Нет данных</p>';
+                    return;
+                }
+
+                if (workout.missed) {
+                    infoDiv.innerHTML = '<p style="color: var(--danger); text-align: center;">❌ День пропущен</p>';
+                    return;
+                }
+
+                const dateObj = new Date(selectedDate);
+                const setsHTML = workout.sets.map((s, i) => `<div style="padding: 8px; background: var(--bg); border-radius: 8px; margin: 4px 0;"><strong>Подход ${i + 1}:</strong> ${s} отжиманий</div>`).join('');
+
+                infoDiv.innerHTML = `<div style="text-align: center;"><p style="font-size: 0.9em; color: var(--text-light);">${dateObj.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p><p style="font-size: 1.4em; font-weight: 800; color: var(--success); margin: 8px 0;">✅ ${workout.total} отжиманий</p>${workout.time ? `<p style="font-size: 0.9em; color: var(--text-light);">⏰ ${workout.time}</p>` : ''}</div><div style="margin-top: 12px;">${setsHTML}</div>`;
+            }
+
+            function renderChart() {
+                const chart = document.getElementById('chart');
+                const today = new Date();
+                const start = new Date(today);
+                start.setDate(today.getDate() - 13);
+
+                chart.innerHTML = '';
+
+                let maxPushups = 50;
+                for (let i = 0; i < 14; i++) {
+                    const date = new Date(start);
+                    date.setDate(start.getDate() + i);
+                    const dateStr = date.toDateString();
+                    const workout = data.workouts.find(w => w.date === dateStr);
+                    const total = workout?.total || 0;
+                    if (total > maxPushups) maxPushups = total;
+                }
+
+                for (let i = 0; i < 14; i++) {
+                    const date = new Date(start);
+                    date.setDate(start.getDate() + i);
+                    const dateStr = date.toDateString();
+                    const workout = data.workouts.find(w => w.date === dateStr);
+                    const total = workout?.total || 0;
+
+                    const barHeight = total > 0 ? Math.max(20, Math.round((total / maxPushups) * 80)) : 5;
+                    const bgColor = total >= 50 ? 'var(--success)' : total > 0 ? 'var(--primary)' : '#ddd';
+
+                    const bar = document.createElement('div');
+                    bar.style.cssText = `display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-height: 120px; gap: 6px; cursor: pointer;`;
+                    bar.innerHTML = `<div title="${total} отжиманий" style="width: 100%; height: ${barHeight}px; background: ${bgColor}; border-radius: 4px 4px 0 0;"></div><p style="font-size: 0.75em; color: var(--text-light); margin: 0; font-weight: 600; word-break: break-word;">${date.getDate()}</p>`;
+                    bar.onclick = () => selectDate(dateStr);
+                    chart.appendChild(bar);
+                }
+            }
+
+            function updateStats() {
+                const total = data.workouts.reduce((sum, w) => sum + (w.total || 0), 0);
+                const success = data.workouts.filter(w => w.total >= 50).length;
+                const avgPerDay = data.workouts.length > 0 ? Math.round(total / data.workouts.length) : 0;
+
+                let streak = 0;
+                let current = new Date();
+                for (let i = 0; i < 100; i++) {
+                    const dateStr = current.toDateString();
+                    const workout = data.workouts.find(w => w.date === dateStr);
+                    if (workout && workout.total >= 50 && !workout.missed) {
+                        streak++;
+                    } else if (!workout) {
+                        break;
+                    }
+                    current.setDate(current.getDate() - 1);
+                }
+
+                const lastWeight = data.weights.length > 0 ? data.weights[data.weights.length - 1] : null;
+                const weightInfo = document.getElementById('weightInfo');
+                if (lastWeight) {
+                    weightInfo.innerHTML = `<p style="margin: 0;"><strong>${lastWeight.weight} кг</strong></p><p style="font-size: 0.85em; color: var(--text-light); margin: 4px 0;">от ${new Date(lastWeight.date).toLocaleDateString('ru-RU')}</p>`;
+                }
+
+                document.getElementById('totalPushups').textContent = total.toLocaleString();
+                document.getElementById('streak').textContent = streak;
+                document.getElementById('successDays').textContent = success;
+                document.getElementById('avgPerDay').textContent = avgPerDay;
+
+                renderChart();
+            }
+
+            // Инициализация
+            document.addEventListener('DOMContentLoaded', function () {
+                initFirebase();
+            });
+        </script>
 </body>
 
 </html>
