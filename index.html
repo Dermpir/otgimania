@@ -612,9 +612,10 @@
     </div>
 
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.compat.js"></script>
+
 
     <script>
         // Firebase конфигурация
@@ -625,9 +626,9 @@
             projectId: "pushups-tracker-8ee95",
             storageBucket: "pushups-tracker-8ee95.firebasestorage.app",
             messagingSenderId: "546118879090",
-            appId: "1:546118879090:web:8592103d5f94952ab3bfeb",
-            measurementId: "G-4X8H5ESHJT"
+            appId: "1:546118879090:web:8592103d5f94952ab3bfeb"
         };
+
 
         // Переменные приложения
         let currentUser = null;
@@ -642,15 +643,17 @@
         // Инициализация Firebase (если используется)
         let firebaseInitialized = false;
         function initFirebase() {
-            if (!firebaseInitialized && document.querySelector('script[src*="firebase"]')) {
+            if (window.firebase && window.firebase.apps.length === 0) {
                 try {
                     firebase.initializeApp(firebaseConfig);
-                    firebaseInitialized = true;
-                    console.log('Firebase инициализирован');
+                    console.log('✅ Firebase инициализирован');
+                    return true;
                 } catch (error) {
-                    console.log('Firebase уже инициализирован или недоступен');
+                    console.error('❌ Ошибка инициализации:', error);
+                    return false;
                 }
             }
+            return true;
         }
 
         function setAuthMode(mode) {
@@ -680,12 +683,6 @@
         }
 
         function firebaseRegister() {
-            // Проверка, загружена ли Firebase
-            if (typeof firebase === 'undefined') {
-                showFirebaseError('Firebase не загружен. Попробуйте позже или используйте локальное хранилище');
-                return;
-            }
-
             if (!initFirebase()) {
                 showFirebaseError('Firebase недоступен');
                 return;
@@ -709,9 +706,8 @@
             firebase.auth().createUserWithEmailAndPassword(email, password)
                 .then(userCredential => {
                     firebaseUser = userCredential.user;
-                    currentUser = userCredential.user.uid;
-                    document.getElementById('firebaseMessage').textContent = '✅ Регистрация успешна! Нажмите "Начать"';
-                    document.getElementById('firebaseMessage').classList.remove('hidden');
+                    currentUser = firebaseUser.uid;
+                    showFirebaseError('✅ Регистрация успешна! Нажмите "Начать"');
                     document.getElementById('registerBtn').disabled = false;
                 })
                 .catch(error => {
@@ -720,19 +716,17 @@
                         errorMsg = 'Этот email уже зарегистрирован';
                     } else if (error.code === 'auth/invalid-email') {
                         errorMsg = 'Некорректный email';
+                    } else if (error.code === 'auth/weak-password') {
+                        errorMsg = 'Слабый пароль (минимум 6 символов)';
                     }
                     showFirebaseError(errorMsg);
                     document.getElementById('registerBtn').disabled = false;
+                    console.error('Register error:', error);
                 });
         }
 
-        function firebaseLogin() {
-            // Проверка, загружена ли Firebase
-            if (typeof firebase === 'undefined') {
-                showFirebaseError('Firebase не загружен. Попробуйте позже или используйте локальное хранилище');
-                return;
-            }
 
+        function firebaseLogin() {
             if (!initFirebase()) {
                 showFirebaseError('Firebase недоступен');
                 return;
@@ -751,9 +745,8 @@
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then(userCredential => {
                     firebaseUser = userCredential.user;
-                    currentUser = userCredential.user.uid;
-                    document.getElementById('firebaseMessage').textContent = '✅ Вход успешен! Нажмите "Начать"';
-                    document.getElementById('firebaseMessage').classList.remove('hidden');
+                    currentUser = firebaseUser.uid;
+                    showFirebaseError('✅ Вход успешен! Нажмите "Начать"');
                     document.getElementById('loginBtn').disabled = false;
                 })
                 .catch(error => {
@@ -765,8 +758,10 @@
                     }
                     showFirebaseError(errorMsg);
                     document.getElementById('loginBtn').disabled = false;
+                    console.error('Login error:', error);
                 });
         }
+
 
         function updateSyncStatus(status, type = 'synced') {
             const statusDiv = document.getElementById('syncStatus');
@@ -799,23 +794,31 @@
         }
 
         function loadFirebaseData() {
-            updateSyncStatus('☁️ Загрузка данных...', 'syncing');
-
-            const dbRef = firebase.database().ref('users/' + currentUser + '/data');
-            dbRef.on('value', snapshot => {
-                if (snapshot.exists()) {
-                    data = snapshot.val();
-                } else {
-                    data = { workouts: [], weights: [] };
-                }
-                renderMonth();
-                selectDate(selectedDate);
-                updateStats();
-                updateSyncStatus('☁️ Синхронизировано', 'synced');
-            }, error => {
-                updateSyncStatus('❌ Ошибка синхронизации', 'error');
+            if (!firebase.auth().currentUser) {
                 loadLocalData();
-            });
+                return;
+            }
+
+            const userId = firebase.auth().currentUser.uid;
+            updateSyncStatus('☁️ Загрузка...', 'syncing');
+
+            firebase.database().ref('users/' + userId).once('value')
+                .then(snapshot => {
+                    if (snapshot.exists()) {
+                        data = snapshot.val();
+                    } else {
+                        data = { workouts: [], weights: [] };
+                    }
+                    renderMonth();
+                    selectDate(selectedDate);
+                    updateStats();
+                    updateSyncStatus('☁️ Синхронизировано', 'synced');
+                })
+                .catch(error => {
+                    updateSyncStatus('❌ Ошибка загрузки', 'error');
+                    console.error('Load error:', error);
+                    loadLocalData();
+                });
         }
 
         function saveUserData() {
@@ -832,16 +835,22 @@
         }
 
         function saveFirebaseData() {
-            if (!firebaseUser) return;
+            if (!firebase.auth().currentUser) {
+                console.error('User not authenticated');
+                return;
+            }
 
+            const userId = firebase.auth().currentUser.uid;
             updateSyncStatus('☁️ Сохранение...', 'syncing');
 
-            firebase.database().ref('users/' + currentUser + '/data').set(data)
+            firebase.database().ref('users/' + userId).set(data)
                 .then(() => {
                     updateSyncStatus('☁️ Синхронизировано', 'synced');
+                    console.log('Data saved to Firebase');
                 })
                 .catch(error => {
                     updateSyncStatus('❌ Ошибка сохранения', 'error');
+                    console.error('Save error:', error);
                     saveLocalData();
                 });
         }
