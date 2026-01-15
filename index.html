@@ -231,6 +231,29 @@
             align-items: center;
         }
 
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-row input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checkbox-row label {
+            cursor: pointer;
+            font-weight: 500;
+            flex-grow: 1;
+        }
+
         input,
         textarea {
             padding: 12px;
@@ -381,6 +404,88 @@
             border-left: 4px solid #f5c6cb;
         }
 
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--card);
+            padding: 30px 24px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 1.4em;
+            font-weight: 800;
+            margin-bottom: 24px;
+            text-align: center;
+            color: var(--text);
+        }
+
+        .difficulty-option {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            margin-bottom: 12px;
+            background: var(--bg);
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .difficulty-option:hover {
+            background: #eef2ff;
+            border-color: var(--primary);
+        }
+
+        .difficulty-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-right: 12px;
+        }
+
+        .difficulty-label {
+            flex-grow: 1;
+        }
+
+        .difficulty-name {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .difficulty-desc {
+            font-size: 0.85em;
+            color: var(--text-light);
+        }
+
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
         @media (max-width: 600px) {
             .header h1 {
                 font-size: 1.8em;
@@ -479,6 +584,16 @@
                 </div>
                 <div class="input-group">
                     <input type="time" id="workoutTime" placeholder="⏰ Время">
+                    
+                    <!-- Новое: Галочка для отжиманий от коленей -->
+                    <div class="checkbox-row">
+                        <input type="checkbox" id="fromKnees" onchange="updateKneesStatus()">
+                        <label for="fromKnees">
+                            <div class="difficulty-name">Отжимания от коленей 🦵</div>
+                            <div class="difficulty-desc">Более простой вариант</div>
+                        </label>
+                    </div>
+
                     <div id="setsContainer">
                         <div class="set-row">
                             <input type="number" class="set-input" placeholder="Повторения подхода 1" min="0">
@@ -549,6 +664,42 @@
         </div>
     </div>
 
+    <!-- Модальное окно для выбора сложности -->
+    <div id="difficultyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">🎯 Выберите сложность упражнений</div>
+            
+            <label class="difficulty-option">
+                <input type="radio" name="difficulty" value="easy" checked>
+                <div class="difficulty-label">
+                    <div class="difficulty-name">😊 Легкие</div>
+                    <div class="difficulty-desc">От коленей, новичкам или при болях</div>
+                </div>
+            </label>
+
+            <label class="difficulty-option">
+                <input type="radio" name="difficulty" value="medium">
+                <div class="difficulty-label">
+                    <div class="difficulty-name">💪 Средние</div>
+                    <div class="difficulty-desc">Стандартные отжимания</div>
+                </div>
+            </label>
+
+            <label class="difficulty-option">
+                <input type="radio" name="difficulty" value="hard">
+                <div class="difficulty-label">
+                    <div class="difficulty-name">🔥 Сложные</div>
+                    <div class="difficulty-desc">Отжимания с дополнительной нагрузкой</div>
+                </div>
+            </label>
+
+            <div class="modal-buttons">
+                <button class="btn btn-danger btn-small" onclick="closeDifficultyModal()">Отмена</button>
+                <button class="btn btn-primary btn-small" onclick="confirmDifficulty()">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -569,6 +720,7 @@
         let data = { workouts: [], weights: [] };
         let selectedDate = new Date().toDateString();
         let currentMonth = new Date();
+        let pendingWorkout = null;
 
         function initFirebase() {
             try {
@@ -764,7 +916,6 @@
 
                     document.getElementById('appSection').classList.add('hidden');
                     document.getElementById('authSection').classList.remove('hidden');
-
                     console.log('✅ UI reset to login screen');
                 })
                 .catch(error => {
@@ -924,6 +1075,7 @@
             const setsContainer = document.getElementById('setsContainer');
             setsContainer.innerHTML = '<div class="set-row"><input type="number" class="set-input" placeholder="Повторения подхода 1" min="0"><button class="delete-btn" onclick="deleteSet(this)">❌</button></div>';
             document.getElementById('workoutTime').value = '';
+            document.getElementById('fromKnees').checked = false;
 
             if (workout && workout.sets && workout.sets.length > 0) {
                 setsContainer.innerHTML = '';
@@ -934,6 +1086,7 @@
                     setsContainer.appendChild(row);
                 });
                 document.getElementById('workoutTime').value = workout.time || '';
+                document.getElementById('fromKnees').checked = workout.fromKnees || false;
             }
 
             displayWorkoutInfo();
@@ -952,25 +1105,64 @@
             btn.parentElement.remove();
         }
 
+        function updateKneesStatus() {
+            const fromKnees = document.getElementById('fromKnees').checked;
+            if (fromKnees) {
+                console.log('✅ Отжимания от коленей включены');
+            }
+        }
+
         function saveWorkout() {
             const inputs = document.querySelectorAll('.set-input');
             const sets = Array.from(inputs).map(input => parseInt(input.value) || 0);
             const total = sets.reduce((a, b) => a + b, 0);
             const time = document.getElementById('workoutTime').value;
+            const fromKnees = document.getElementById('fromKnees').checked;
 
-            const existingIdx = data.workouts.findIndex(w => w.date === selectedDate);
-            const workout = { date: selectedDate, time, sets, total, missed: false };
+            if (total === 0) {
+                alert('⚠️ Введите хотя бы одно повторение');
+                return;
+            }
 
+            // Сохраняем в pendingWorkout и открываем модал
+            pendingWorkout = { date: selectedDate, time, sets, total, missed: false, fromKnees };
+            openDifficultyModal();
+        }
+
+        function openDifficultyModal() {
+            document.getElementById('difficultyModal').classList.add('show');
+        }
+
+        function closeDifficultyModal() {
+            document.getElementById('difficultyModal').classList.remove('show');
+            pendingWorkout = null;
+        }
+
+        function confirmDifficulty() {
+            if (!pendingWorkout) return;
+
+            const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+            pendingWorkout.difficulty = difficulty;
+
+            const existingIdx = data.workouts.findIndex(w => w.date === pendingWorkout.date);
             if (existingIdx >= 0) {
-                data.workouts[existingIdx] = workout;
+                data.workouts[existingIdx] = pendingWorkout;
             } else {
-                data.workouts.push(workout);
+                data.workouts.push(pendingWorkout);
             }
 
             saveUserData();
             renderMonth();
             updateStats();
-            alert(total >= 50 ? `✅ Отлично! ${total} отжиманий!` : `📝 Записано ${total} отжиманий`);
+            closeDifficultyModal();
+            
+            const kneesTxt = pendingWorkout.fromKnees ? ' (от коленей)' : '';
+            const difficultyEmoji = { easy: '😊', medium: '💪', hard: '🔥' };
+            const emoji = difficultyEmoji[difficulty] || '✅';
+            
+            alert(pendingWorkout.total >= 50 ? 
+                `${emoji} Отлично! ${pendingWorkout.total} отжиманий${kneesTxt}!` : 
+                `📝 Записано ${pendingWorkout.total} отжиманий${kneesTxt}`);
         }
 
         function markMissed() {
@@ -1024,9 +1216,14 @@
             }
 
             const dateObj = new Date(selectedDate);
+            const kneesTxt = workout.fromKnees ? ' <span style="color: var(--danger);">(от коленей)</span>' : '';
+            const difficultyEmoji = { easy: '😊', medium: '💪', hard: '🔥' };
+            const emoji = difficultyEmoji[workout.difficulty] || '';
+            const difficultyTxt = workout.difficulty ? `<p style="font-size: 0.9em; color: var(--text-light);">Сложность: ${emoji}</p>` : '';
+            
             const setsHTML = workout.sets.map((s, i) => `<div style="padding: 8px; background: var(--bg); border-radius: 8px; margin: 4px 0;"><strong>Подход ${i + 1}:</strong> ${s} отжиманий</div>`).join('');
 
-            infoDiv.innerHTML = `<div style="text-align: center;"><p style="font-size: 0.9em; color: var(--text-light);">${dateObj.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p><p style="font-size: 1.4em; font-weight: 800; color: var(--success); margin: 8px 0;">✅ ${workout.total} отжиманий</p>${workout.time ? `<p style="font-size: 0.9em; color: var(--text-light);">⏰ ${workout.time}</p>` : ''}</div><div style="margin-top: 12px;">${setsHTML}</div>`;
+            infoDiv.innerHTML = `<div style="text-align: center;"><p style="font-size: 0.9em; color: var(--text-light);">${dateObj.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p><p style="font-size: 1.4em; font-weight: 800; color: var(--success); margin: 8px 0;">✅ ${workout.total} отжиманий${kneesTxt}</p>${workout.time ? `<p style="font-size: 0.9em; color: var(--text-light);">⏰ ${workout.time}</p>` : ''}${difficultyTxt}</div><div style="margin-top: 12px;">${setsHTML}</div>`;
         }
 
         function renderChart() {
@@ -1098,18 +1295,11 @@
             const success = data.workouts.filter(w => w.total >= 50).length;
             const avgPerDay = data.workouts.length > 0 ? Math.round(total / data.workouts.length) : 0;
 
-            // Считаем серию от последней тренировки (не обязательно сегодня)
             let streak = 0;
-
-            // Сначала найдём последнюю тренировку
             if (data.workouts.length > 0) {
-                // Сортируем по датам (новые первыми)
                 const sorted = [...data.workouts].sort((a, b) => new Date(b.date) - new Date(a.date));
-
                 let current = new Date(sorted[0].date);
-                const today = new Date();
 
-                // Начинаем от последней тренировки и идём назад
                 for (let i = 0; i < 365; i++) {
                     const dateStr = current.toDateString();
                     const workout = data.workouts.find(w => w.date === dateStr);
@@ -1119,14 +1309,11 @@
                             streak++;
                             current.setDate(current.getDate() - 1);
                         } else if (workout.missed) {
-                            // Пропуск прерывает серию
                             break;
                         } else {
-                            // Тренировка, но < 50 отжиманий - прерывает серию
                             break;
                         }
                     } else {
-                        // Нет тренировки - конец серии
                         break;
                     }
                 }
@@ -1148,6 +1335,13 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             initFirebase();
+        });
+
+        // Закрытие модала при клике на фон
+        document.getElementById('difficultyModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDifficultyModal();
+            }
         });
     </script>
 </body>
