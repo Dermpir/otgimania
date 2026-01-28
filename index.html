@@ -542,7 +542,12 @@
         let firebaseUser = null;
         let currentUser = null;
         let isSignupMode = false;
-        let useLocalStorage = false;
+
+        // ГЛАВНЫЕ ДАННЫЕ - структура как в paste.txt
+        let data = { 
+            workouts: [],
+            weights: []
+        };
 
         // Initialize Firebase
         try {
@@ -615,83 +620,48 @@
             document.getElementById('authError').style.display = 'none';
         }
 
-        // Data Management
-        async function getWorkouts() {
-            if (useLocalStorage) {
-                return JSON.parse(localStorage.getItem('workouts') || '{}');
+        // ЗАГРУЗКА ДАННЫХ из Firebase
+        async function loadFirebaseData() {
+            if (!firebase.auth().currentUser) {
+                console.error("Нет пользователя");
+                data = { workouts: [], weights: [] };
+                return;
             }
+
+            const userId = firebase.auth().currentUser.uid;
+            console.log("Загружаем данные для пользователя:", userId);
+
             try {
-                const snapshot = await firebase.database().ref('users/' + currentUser + '/workouts').once('value');
-                return snapshot.val() || {};
-            } catch (e) {
-                console.error("Ошибка при чтении тренировок:", e);
-                return {};
+                const snapshot = await firebase.database().ref('users/' + userId).once('value');
+                if (snapshot.exists()) {
+                    data = snapshot.val();
+                    console.log("✅ Данные загружены из Firebase:", data);
+                } else {
+                    data = { workouts: [], weights: [] };
+                    console.log("Нет данных, начинаем с нуля");
+                }
+            } catch (error) {
+                console.error("Ошибка загрузки:", error);
+                data = { workouts: [], weights: [] };
             }
         }
 
-        async function saveWorkouts(data) {
-            if (useLocalStorage) {
-                localStorage.setItem('workouts', JSON.stringify(data));
+        // СОХРАНЕНИЕ ДАННЫХ в Firebase
+        async function saveUserData() {
+            if (!firebase.auth().currentUser) {
+                console.error("Нет пользователя");
                 return;
             }
+
+            const userId = firebase.auth().currentUser.uid;
+            console.log("Сохраняем данные для пользователя:", userId);
+
             try {
-                await firebase.database().ref('users/' + currentUser + '/workouts').set(data);
-                console.log("✅ Тренировки сохранены в Firebase");
-            } catch (e) {
-                console.error("Ошибка при сохранении тренировок:", e);
+                await firebase.database().ref('users/' + userId).set(data);
+                console.log("✅ Данные сохранены в Firebase");
+            } catch (error) {
+                console.error("Ошибка сохранения:", error);
                 alert('Ошибка при сохранении данных');
-            }
-        }
-
-        async function getWeights() {
-            if (useLocalStorage) {
-                return JSON.parse(localStorage.getItem('weights') || '[]');
-            }
-            try {
-                const snapshot = await firebase.database().ref('users/' + currentUser + '/weights').once('value');
-                return snapshot.val() || [];
-            } catch (e) {
-                console.error("Ошибка при чтении веса:", e);
-                return [];
-            }
-        }
-
-        async function saveWeights(data) {
-            if (useLocalStorage) {
-                localStorage.setItem('weights', JSON.stringify(data));
-                return;
-            }
-            try {
-                await firebase.database().ref('users/' + currentUser + '/weights').set(data);
-                console.log("✅ Вес сохранен в Firebase");
-            } catch (e) {
-                console.error("Ошибка при сохранении веса:", e);
-            }
-        }
-
-        async function getMaxTests() {
-            if (useLocalStorage) {
-                return JSON.parse(localStorage.getItem('maxTests') || '[]');
-            }
-            try {
-                const snapshot = await firebase.database().ref('users/' + currentUser + '/maxTests').once('value');
-                return snapshot.val() || [];
-            } catch (e) {
-                console.error("Ошибка при чтении максимума:", e);
-                return [];
-            }
-        }
-
-        async function saveMaxTests(data) {
-            if (useLocalStorage) {
-                localStorage.setItem('maxTests', JSON.stringify(data));
-                return;
-            }
-            try {
-                await firebase.database().ref('users/' + currentUser + '/maxTests').set(data);
-                console.log("✅ Максимум сохранен в Firebase");
-            } catch (e) {
-                console.error("Ошибка при сохранении максимума:", e);
             }
         }
 
@@ -699,6 +669,9 @@
         async function init() {
             const now = new Date();
             document.getElementById('monthSelect').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+            
+            // СНАЧАЛА загружаем данные!
+            await loadFirebaseData();
             
             addSet();
             renderMonthCalendar();
@@ -761,10 +734,20 @@
             }
 
             const today = new Date().toISOString().split('T')[0];
-            const workouts = await getWorkouts();
-            workouts[today] = { reps: totalReps, sets: setDetails, type: 'regular', timestamp: Date.now() };
-            await saveWorkouts(workouts);
+            
+            // Удаляем старую тренировку на этот день если есть
+            data.workouts = data.workouts.filter(w => w.date !== today);
+            
+            // Добавляем новую
+            data.workouts.push({ 
+                date: today, 
+                total: totalReps, 
+                sets: setDetails, 
+                type: 'regular', 
+                timestamp: Date.now() 
+            });
 
+            await saveUserData();
             clearSetInputs();
             updateStats();
             renderMonthCalendar();
@@ -783,29 +766,45 @@
             }
 
             const today = new Date().toISOString().split('T')[0];
-            const maxTests = await getMaxTests();
-            maxTests.push({ date: today, reps, timestamp: Date.now() });
-            await saveMaxTests(maxTests);
+            
+            // Удаляем старый тест если есть
+            data.workouts = data.workouts.filter(w => w.date !== today);
+            
+            // Добавляем новый тест
+            data.workouts.push({ 
+                date: today, 
+                total: reps, 
+                sets: [{ reps, difficulty: 'regular' }], 
+                type: 'max_test', 
+                timestamp: Date.now() 
+            });
 
-            const workouts = await getWorkouts();
-            workouts[today] = { reps, sets: [{ reps, difficulty: 'regular' }], type: 'max_test', timestamp: Date.now() };
-            await saveWorkouts(workouts);
-
+            await saveUserData();
             input.value = '';
             updateStats();
             renderMonthCalendar();
             updateChart();
-            updateMaxTestAlert();
             updateMaxTestChart();
+            updateMaxTestAlert();
             alert('✅ Максимум записан!');
         }
 
         async function markMissed() {
             const today = new Date().toISOString().split('T')[0];
-            const workouts = await getWorkouts();
-            workouts[today] = { reps: 0, sets: [], type: 'missed', timestamp: Date.now() };
-            await saveWorkouts(workouts);
+            
+            // Удаляем старую тренировку если есть
+            data.workouts = data.workouts.filter(w => w.date !== today);
+            
+            // Добавляем пропуск
+            data.workouts.push({ 
+                date: today, 
+                total: 0, 
+                sets: [], 
+                type: 'missed', 
+                timestamp: Date.now() 
+            });
 
+            await saveUserData();
             clearSetInputs();
             updateStats();
             renderMonthCalendar();
@@ -827,18 +826,25 @@
             }
 
             const today = new Date().toISOString().split('T')[0];
-            const weights = await getWeights();
-            weights.push({ date: today, weight, timestamp: Date.now() });
-            await saveWeights(weights);
+            
+            // Удаляем старый вес если есть
+            data.weights = data.weights.filter(w => w.date !== today);
+            
+            // Добавляем новый
+            data.weights.push({ 
+                date: today, 
+                weight, 
+                timestamp: Date.now() 
+            });
 
+            await saveUserData();
             input.value = '';
             updateWeightTrend();
             alert('✅ Вес записан!');
         }
 
         async function updateMaxTestAlert() {
-            const workouts = await getWorkouts();
-            const total = Object.values(workouts).reduce((sum, w) => sum + (w.reps || 0), 0);
+            const total = data.workouts.reduce((sum, w) => sum + (w.total || 0), 0);
             const alert = document.getElementById('maxTestAlert');
             
             if (total >= 500 && total % 500 >= 450) {
@@ -849,17 +855,16 @@
         }
 
         async function updateStats() {
-            const workouts = await getWorkouts();
-            const workoutEntries = Object.entries(workouts).sort((a, b) => a[0].localeCompare(b[0]));
+            const workoutEntries = [...data.workouts].sort((a, b) => a.date.localeCompare(b.date));
             
             let total = 0;
             let successDays = 0;
             let streak = 0;
             let currentStreak = 0;
 
-            workoutEntries.forEach(([date, data]) => {
-                if (data.type !== 'missed') {
-                    total += data.reps || 0;
+            workoutEntries.forEach((workout) => {
+                if (workout.type !== 'missed') {
+                    total += workout.total || 0;
                     successDays += 1;
                     currentStreak += 1;
                     streak = Math.max(streak, currentStreak);
@@ -879,7 +884,6 @@
         async function renderMonthCalendar() {
             const monthSelect = document.getElementById('monthSelect').value;
             const [year, month] = monthSelect.split('-');
-            const workouts = await getWorkouts();
 
             const monthCalendar = document.getElementById('monthCalendar');
             monthCalendar.innerHTML = '';
@@ -894,7 +898,7 @@
 
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const workout = workouts[dateStr];
+                const workout = data.workouts.find(w => w.date === dateStr);
                 
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day';
@@ -905,7 +909,7 @@
                         dayElement.classList.add('missed');
                     } else if (workout.type === 'max_test') {
                         dayElement.classList.add('max-test');
-                    } else if (workout.reps > 0) {
+                    } else if (workout.total > 0) {
                         dayElement.classList.add('completed');
                     }
                 }
@@ -925,9 +929,9 @@
             if (workout.type === 'missed') {
                 details += 'Статус: Пропущено ❌';
             } else if (workout.type === 'max_test') {
-                details += `Тип: Проверка максимума 📊\nПовторения: ${workout.reps}`;
+                details += `Тип: Проверка максимума 📊\nПовторения: ${workout.total}`;
             } else {
-                details += `Всего: ${workout.reps}\n`;
+                details += `Всего: ${workout.total}\n`;
                 if (workout.sets && workout.sets.length > 0) {
                     details += `\nПодходы:\n`;
                     workout.sets.forEach((set, i) => {
@@ -940,17 +944,16 @@
 
         async function updateChart() {
             const period = document.getElementById('chartPeriod').value;
-            const workouts = await getWorkouts();
             const chart = document.getElementById('chart');
             chart.innerHTML = '';
 
-            let entries = Object.entries(workouts).sort((a, b) => a[0].localeCompare(b[0]));
+            let entries = [...data.workouts].sort((a, b) => a.date.localeCompare(b.date));
 
             if (period !== 'all') {
                 const days = parseInt(period);
                 const cutoffDate = new Date();
                 cutoffDate.setDate(cutoffDate.getDate() - days);
-                entries = entries.filter(([date]) => new Date(date) >= cutoffDate);
+                entries = entries.filter((w) => new Date(w.date) >= cutoffDate);
             }
 
             if (entries.length === 0) {
@@ -958,24 +961,24 @@
                 return;
             }
 
-            const maxReps = Math.max(...entries.map(([, w]) => w.reps || 0), 50);
+            const maxReps = Math.max(...entries.map((w) => w.total || 0), 50);
 
-            entries.forEach(([date, workout]) => {
-                const height = workout.reps > 0 ? (workout.reps / maxReps) * 100 : 0;
+            entries.forEach((workout) => {
+                const height = workout.total > 0 ? (workout.total / maxReps) * 100 : 0;
                 const isMaxTest = workout.type === 'max_test';
                 
                 const bar = document.createElement('div');
                 bar.className = 'chart-bar';
                 bar.innerHTML = `
                     <div class="chart-column ${isMaxTest ? 'max-test' : ''}" style="height: ${height}%;"></div>
-                    <div class="chart-label">${new Date(date).getDate()}</div>
+                    <div class="chart-label">${new Date(workout.date).getDate()}</div>
                 `;
                 chart.appendChild(bar);
             });
         }
 
         async function updateMaxTestChart() {
-            const maxTests = await getMaxTests();
+            const maxTests = data.workouts.filter(w => w.type === 'max_test');
             const container = document.getElementById('maxTestChart');
 
             if (maxTests.length === 0) {
@@ -983,18 +986,18 @@
                 return;
             }
 
-            const maxReps = Math.max(...maxTests.map(t => t.reps)) * 1.1;
+            const maxReps = Math.max(...maxTests.map(t => t.total)) * 1.1;
 
             container.innerHTML = maxTests.map((test) => {
                 const date = new Date(test.date);
                 const formatted = date.toLocaleDateString('ru-RU');
-                const height = (test.reps / maxReps) * 100;
+                const height = (test.total / maxReps) * 100;
 
                 return `
                     <div class="chart-bar" style="margin-bottom: 16px;">
                         <div style="width: 100%; display: flex; justify-content: space-between; margin-bottom: 8px;">
                             <span style="font-weight: 600;">${formatted}</span>
-                            <span style="color: var(--warning); font-weight: 700;">${test.reps} повт.</span>
+                            <span style="color: var(--warning); font-weight: 700;">${test.total} повт.</span>
                         </div>
                         <div class="chart-column max-test" style="height: 30px; border-radius: 8px;"></div>
                     </div>
@@ -1003,15 +1006,14 @@
         }
 
         async function updateWeightTrend() {
-            const weights = await getWeights();
             const container = document.getElementById('weightTrend');
 
-            if (weights.length === 0) {
+            if (data.weights.length === 0) {
                 container.innerHTML = '<p style="color: var(--text-light); text-align: center;">Нет записей веса</p>';
                 return;
             }
 
-            const sorted = [...weights].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const sorted = [...data.weights].sort((a, b) => new Date(a.date) - new Date(b.date));
 
             container.innerHTML = sorted.map((w, idx) => {
                 const date = new Date(w.date).toLocaleDateString('ru-RU');
