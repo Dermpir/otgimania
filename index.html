@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Отжимания Cloud - Трекер</title>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
         * {
             margin: 0;
@@ -89,6 +89,7 @@
             border-radius: 10px;
             font-size: 1em;
             transition: border-color 0.2s;
+            font-family: inherit;
         }
 
         .form-input:focus {
@@ -202,6 +203,7 @@
             border: 2px solid var(--border);
             border-radius: 10px;
             font-size: 1em;
+            font-family: inherit;
         }
 
         .difficulty-select {
@@ -211,6 +213,7 @@
             background: var(--bg);
             cursor: pointer;
             font-size: 0.9em;
+            font-family: inherit;
         }
 
         .delete-btn {
@@ -393,20 +396,6 @@
             font-weight: 700;
         }
 
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
         @media (max-width: 600px) {
             .set-row {
                 grid-template-columns: 1fr 1fr auto;
@@ -553,14 +542,13 @@
         let firebaseUser = null;
         let currentUser = null;
         let isSignupMode = false;
-        const auth = firebase.auth;
-        const db = firebase.firestore;
         let useLocalStorage = true;
 
         // Initialize Firebase
         try {
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
+                console.log("Firebase инициализирован");
             }
         } catch (e) {
             console.error("Firebase ошибка:", e);
@@ -571,6 +559,7 @@
             if (user) {
                 firebaseUser = user;
                 currentUser = user.uid;
+                console.log("Пользователь:", currentUser);
                 showAppScreen();
                 setTimeout(() => init(), 500);
             } else {
@@ -595,8 +584,8 @@
         }
 
         async function handleLogin() {
-            const email = document.getElementById('authEmail').value;
-            const password = document.getElementById('authPassword').value;
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
             const errorDiv = document.getElementById('authError');
 
             if (!email || !password) {
@@ -613,7 +602,8 @@
                 }
                 errorDiv.style.display = 'none';
             } catch (error) {
-                errorDiv.textContent = error.message;
+                console.error("Ошибка авторизации:", error);
+                errorDiv.textContent = error.message || 'Ошибка авторизации';
                 errorDiv.style.display = 'block';
             }
         }
@@ -630,8 +620,13 @@
             if (useLocalStorage) {
                 return JSON.parse(localStorage.getItem('workouts') || '{}');
             }
-            const doc = await db.collection('users').doc(currentUser).collection('workouts').doc('data').get();
-            return doc.exists ? doc.data().workouts || {} : {};
+            try {
+                const snapshot = await firebase.database().ref('users/' + currentUser + '/workouts').once('value');
+                return snapshot.val() || {};
+            } catch (e) {
+                console.error("Ошибка при чтении тренировок:", e);
+                return {};
+            }
         }
 
         async function saveWorkouts(data) {
@@ -639,15 +634,24 @@
                 localStorage.setItem('workouts', JSON.stringify(data));
                 return;
             }
-            await db.collection('users').doc(currentUser).collection('workouts').doc('data').set({ workouts: data }, { merge: true });
+            try {
+                await firebase.database().ref('users/' + currentUser + '/workouts').set(data);
+            } catch (e) {
+                console.error("Ошибка при сохранении тренировок:", e);
+            }
         }
 
         async function getWeights() {
             if (useLocalStorage) {
                 return JSON.parse(localStorage.getItem('weights') || '[]');
             }
-            const doc = await db.collection('users').doc(currentUser).collection('data').doc('weights').get();
-            return doc.exists ? doc.data().weights || [] : [];
+            try {
+                const snapshot = await firebase.database().ref('users/' + currentUser + '/weights').once('value');
+                return snapshot.val() || [];
+            } catch (e) {
+                console.error("Ошибка при чтении веса:", e);
+                return [];
+            }
         }
 
         async function saveWeights(data) {
@@ -655,15 +659,24 @@
                 localStorage.setItem('weights', JSON.stringify(data));
                 return;
             }
-            await db.collection('users').doc(currentUser).collection('data').doc('weights').set({ weights: data }, { merge: true });
+            try {
+                await firebase.database().ref('users/' + currentUser + '/weights').set(data);
+            } catch (e) {
+                console.error("Ошибка при сохранении веса:", e);
+            }
         }
 
         async function getMaxTests() {
             if (useLocalStorage) {
                 return JSON.parse(localStorage.getItem('maxTests') || '[]');
             }
-            const doc = await db.collection('users').doc(currentUser).collection('data').doc('maxTests').get();
-            return doc.exists ? doc.data().maxTests || [] : [];
+            try {
+                const snapshot = await firebase.database().ref('users/' + currentUser + '/maxTests').once('value');
+                return snapshot.val() || [];
+            } catch (e) {
+                console.error("Ошибка при чтении максимума:", e);
+                return [];
+            }
         }
 
         async function saveMaxTests(data) {
@@ -671,7 +684,11 @@
                 localStorage.setItem('maxTests', JSON.stringify(data));
                 return;
             }
-            await db.collection('users').doc(currentUser).collection('data').doc('maxTests').set({ maxTests: data }, { merge: true });
+            try {
+                await firebase.database().ref('users/' + currentUser + '/maxTests').set(data);
+            } catch (e) {
+                console.error("Ошибка при сохранении максимума:", e);
+            }
         }
 
         // App Functions
