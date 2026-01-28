@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Отжимания Cloud - Трекер</title>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+    <title>Р  РЎвЂєР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР РЋР РЏ 50/Р  РўвЂР  Р’ВµР  Р вЂ¦Р РЋР Р‰ - Р  РІР‚С”Р  РЎвЂўР  РЎвЂќР  Р’В°Р  Р’В»Р РЋР Р‰Р  Р вЂ¦Р РЋРІР‚в„–Р  РІвЂћвЂ“ Р РЋРІР‚С™Р РЋР вЂљР  Р’ВµР  РЎвЂќР  Р’ВµР РЋР вЂљ</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +17,6 @@
             --primary-dark: #764ba2;
             --success: #48bb78;
             --danger: #f56565;
-            --warning: #ed8936;
             --bg: #f7fafc;
             --card: #ffffff;
             --text: #2d3748;
@@ -36,135 +33,51 @@
         }
 
         .container {
-            max-width: 700px;
+            max-width: 600px;
             margin: 0 auto;
-        }
-
-        .auth-screen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        .auth-form {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 32px 24px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .auth-title {
-            text-align: center;
-            font-size: 2em;
-            font-weight: 800;
-            margin-bottom: 8px;
-            color: var(--text);
-        }
-
-        .auth-subtitle {
-            text-align: center;
-            color: var(--text-light);
-            margin-bottom: 24px;
-            font-size: 0.95em;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 1em;
-            transition: border-color 0.2s;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .form-error {
-            color: var(--danger);
-            font-size: 0.85em;
-            margin-top: 4px;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            margin-bottom: 12px;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: var(--bg);
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
-
-        .btn-secondary:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
         }
 
         .header {
             text-align: center;
             color: white;
             margin-bottom: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .header h1 {
-            font-size: 2em;
+            font-size: clamp(1.5em, 5vw, 2.5em);
             font-weight: 800;
-            flex: 1;
+            margin-bottom: 8px;
+            word-break: break-word;
         }
 
-        .btn-logout {
-            background: var(--danger);
-            color: white;
-            padding: 8px 12px;
-            font-size: 0.85em;
-            width: auto;
+        .header p {
+            font-size: clamp(0.9em, 3vw, 1.1em);
+            opacity: 0.95;
+            word-break: break-word;
         }
 
-        .btn-logout:hover {
-            background: #e53e3e;
+        .auth-section {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .auth-section input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1em;
+        }
+
+        .auth-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
         .card {
@@ -173,124 +86,58 @@
             padding: 20px;
             margin-bottom: 16px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
         .section-title {
-            font-size: 1.2em;
+            font-size: clamp(1em, 3vw, 1.2em);
             font-weight: 700;
             margin-bottom: 16px;
             color: var(--text);
+            word-break: break-word;
         }
 
-        .input-group {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .set-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
-            gap: 12px;
-            margin-bottom: 12px;
+        .month-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
-        .set-input {
-            padding: 12px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 1em;
+        .month-nav {
+            display: flex;
+            gap: 8px;
+            order: 2;
         }
 
-        .difficulty-select {
-            padding: 8px 12px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            background: var(--bg);
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-
-        .delete-btn {
-            background: var(--danger);
+        .month-nav button {
+            background: var(--primary);
             color: white;
             border: none;
             width: 36px;
             height: 36px;
             border-radius: 8px;
+            font-size: 1.2em;
             cursor: pointer;
-            font-size: 1em;
+            transition: all 0.2s;
+            flex-shrink: 0;
         }
 
-        .delete-btn:hover {
-            background: #e53e3e;
+        .month-nav button:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
         }
 
-        .btn-small {
-            padding: 8px 12px;
-            font-size: 0.9em;
-        }
-
-        .btn-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #38a169;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #e53e3e;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: white;
-        }
-
-        .btn-warning:hover {
-            background: #d69e2e;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-
-        .stat {
+        .month-name {
+            font-size: clamp(1em, 3vw, 1.3em);
+            font-weight: 700;
             text-align: center;
-            padding: 16px;
-            background: var(--bg);
-            border-radius: 10px;
-        }
-
-        .stat-value {
-            font-size: 2em;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            color: var(--text-light);
-            font-weight: 600;
+            flex: 1;
+            min-width: 200px;
+            word-break: break-word;
+            order: 1;
         }
 
         .calendar {
@@ -300,178 +147,464 @@
             margin-bottom: 16px;
         }
 
+        .weekday-header {
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-light);
+            font-size: clamp(0.7em, 2vw, 0.9em);
+            padding: 6px 2px;
+            text-transform: uppercase;
+        }
+
         .calendar-day {
             aspect-ratio: 1;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
-            font-size: 0.9em;
             font-weight: 600;
+            font-size: clamp(0.8em, 2vw, 1em);
             cursor: pointer;
-            border: 2px solid var(--border);
             transition: all 0.2s;
+            background: var(--bg);
+            border: 2px solid transparent;
+            min-height: 45px;
+            word-break: break-word;
+            padding: 2px;
         }
 
-        .calendar-day.completed {
+        .calendar-day:hover {
+            transform: scale(1.05);
+            background: var(--border);
+        }
+
+        .calendar-day.other-month {
+            color: var(--text-light);
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .calendar-day.other-month:hover {
+            transform: none;
+            background: var(--bg);
+        }
+
+        .calendar-day.today {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .calendar-day.trained {
             background: var(--success);
             color: white;
-            border-color: var(--success);
+            font-weight: 800;
         }
 
-        .calendar-day.max-test {
-            background: var(--warning);
+        .calendar-day.partial {
+            background: var(--primary);
             color: white;
-            border-color: var(--warning);
         }
 
         .calendar-day.missed {
-            background: var(--danger);
-            color: white;
-            border-color: var(--danger);
+            background: #fed7d7;
+            color: #c53030;
         }
 
-        .chart-container {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
+        .calendar-day.selected {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary);
         }
 
-        .chart-bar {
+        .input-group {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .chart-column {
-            background: linear-gradient(to top, var(--primary), var(--primary-dark));
-            border-radius: 4px 4px 0 0;
-            min-height: 4px;
-            width: 100%;
-        }
-
-        .chart-column.max-test {
-            background: linear-gradient(to top, var(--warning), #f6ad55);
-        }
-
-        .chart-label {
-            font-size: 0.8em;
-            color: var(--text-light);
-        }
-
-        .alert {
-            padding: 16px;
-            border-radius: 10px;
+            gap: 12px;
             margin-bottom: 16px;
-            font-weight: 600;
         }
 
-        .alert-warning {
-            background: rgba(237, 137, 54, 0.1);
-            border-left: 4px solid var(--warning);
-            color: var(--warning);
+        .set-row {
+            display: grid;
+            grid-template-columns: 1fr 40px;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
         }
 
-        .weight-point {
+        .checkbox-row {
             display: flex;
-            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
             padding: 12px;
             background: var(--bg);
-            border-radius: 8px;
-            margin-bottom: 8px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-row input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checkbox-row label {
+            cursor: pointer;
+            font-weight: 500;
+            flex-grow: 1;
+        }
+
+        input,
+        textarea {
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            background: var(--bg);
+            color: var(--text);
+            word-break: break-word;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .btn {
+            padding: 14px 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: clamp(0.9em, 2vw, 1em);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            word-break: break-word;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 10px 12px;
+            font-size: 0.9em;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: 12px;
             border-left: 4px solid var(--primary);
         }
 
-        .weight-value {
+        .stat-value {
+            font-size: clamp(1.5em, 4vw, 2em);
+            font-weight: 800;
             color: var(--primary);
+            word-break: break-word;
+        }
+
+        .stat-label {
+            font-size: clamp(0.75em, 2vw, 0.85em);
+            color: var(--text-light);
+            margin-top: 4px;
+            word-break: break-word;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .status {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 0.9em;
+            border-left: 4px solid #28a745;
+            word-break: break-word;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            border-left: 4px solid #f5c6cb;
+            word-break: break-word;
+        }
+
+        .sync-status {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            margin-bottom: 12px;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .sync-status.synced {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .sync-status.syncing {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        .sync-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #f5c6cb;
+        }
+
+        /* Р  РЎС™Р  РЎвЂўР  РўвЂР  Р’В°Р  Р’В»Р РЋР Р‰Р  Р вЂ¦Р  РЎвЂўР  Р’Вµ Р  РЎвЂўР  РЎвЂќР  Р вЂ¦Р  РЎвЂў */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--card);
+            padding: 30px 24px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 1.4em;
+            font-weight: 800;
+            margin-bottom: 24px;
+            text-align: center;
+            color: var(--text);
+        }
+
+        .difficulty-option {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            margin-bottom: 12px;
+            background: var(--bg);
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .difficulty-option:hover {
+            background: #eef2ff;
+            border-color: var(--primary);
+        }
+
+        .difficulty-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-right: 12px;
+        }
+
+        .difficulty-label {
+            flex-grow: 1;
+        }
+
+        .difficulty-name {
             font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
         }
 
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        .difficulty-desc {
+            font-size: 0.85em;
+            color: var(--text-light);
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 24px;
         }
 
         @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .month-header {
+                margin-bottom: 12px;
+            }
+
+            body {
+                padding: 12px 8px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .calendar-day {
+                min-height: 40px;
+            }
+
+            .stat {
+                padding: 12px;
+            }
+
             .set-row {
-                grid-template-columns: 1fr 1fr auto;
+                grid-template-columns: 1fr 35px;
+                gap: 6px;
+            }
+
+            .delete-btn {
+                padding: 6px 8px;
             }
         }
     </style>
 </head>
+
 <body>
-    <!-- Auth Screen -->
-    <div id="authScreen" class="auth-screen">
-        <div class="auth-form">
-            <div class="auth-title">💪</div>
-            <div class="auth-subtitle">Отжимания Cloud</div>
+    <div class="container">
+        <div class="header">
+            <h1>РЎР‚РЎСџРІР‚в„ўР вЂћ 50 Р  РЎвЂўР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР  РІвЂћвЂ“</h1>
+            <p>Р  РЎС›Р РЋР вЂљР  Р’ВµР  РЎвЂќР  Р’ВµР РЋР вЂљ Р  РЎвЂ”Р РЋР вЂљР  РЎвЂўР  РЎвЂ“Р РЋР вЂљР  Р’ВµР РЋР С“Р РЋР С“Р  Р’В°</p>
+        </div>
 
-            <div id="authError" class="form-error" style="display: none; text-align: center; margin-bottom: 16px;"></div>
+        <div id="authSection" class="auth-section">
+            <h2 style="margin-bottom: 16px; font-size: clamp(1.1em, 3vw, 1.3em);">РЎР‚РЎСџРІР‚ВРІР‚в„– Р  РІР‚СњР  РЎвЂўР  Р’В±Р РЋР вЂљР  РЎвЂў Р  РЎвЂ”Р  РЎвЂўР  Р’В¶Р  Р’В°Р  Р’В»Р  РЎвЂўР  Р вЂ Р  Р’В°Р РЋРІР‚С™Р РЋР Р‰!</h2>
+            <p style="color: var(--text-light); margin-bottom: 16px; font-size: clamp(0.85em, 2vw, 0.95em);">Р  РІР‚в„ўР  Р вЂ Р  Р’ВµР  РўвЂР  РЎвЂР РЋРІР‚С™Р  Р’Вµ
+                email Р  РЎвЂ Р  РЎвЂ”Р  Р’В°Р РЋР вЂљР  РЎвЂўР  Р’В»Р РЋР Р‰ Р  РўвЂР  Р’В»Р РЋР РЏ Р  Р вЂ Р РЋРІР‚В¦Р  РЎвЂўР  РўвЂР  Р’В°</p>
 
-            <div class="form-group">
-                <label class="form-label">Email</label>
-                <input type="email" id="authEmail" class="form-input" placeholder="your@email.com">
-            </div>
+            <input type="email" id="firebaseEmail" placeholder="Email">
+            <input type="password" id="firebasePassword" placeholder="Р  РЎСџР  Р’В°Р РЋР вЂљР  РЎвЂўР  Р’В»Р РЋР Р‰" style="margin-top: 12px;">
+            <div id="firebaseMessage" class="hidden error-message" style="margin-top: 12px;"></div>
 
-            <div class="form-group">
-                <label class="form-label">Пароль</label>
-                <input type="password" id="authPassword" class="form-input" placeholder="••••••••">
-            </div>
-
-            <button class="btn btn-primary" id="loginBtn" onclick="handleLogin()">Вход</button>
-            <button class="btn btn-secondary" id="signupBtn" onclick="toggleAuthMode()">Регистрация</button>
-
-            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 0.85em; color: var(--text-light);">
-                <p>Демо-аккаунт:</p>
-                <p><strong>Email:</strong> demo@test.com</p>
-                <p><strong>Пароль:</strong> demo123456</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+                <button class="btn btn-primary btn-small" id="registerBtn"
+                    onclick="firebaseRegister()">Р   Р  Р’ВµР  РЎвЂ“Р  РЎвЂР РЋР С“Р РЋРІР‚С™Р РЋР вЂљР  Р’В°Р РЋРІР‚ Р  РЎвЂР РЋР РЏ</button>
+                <button class="btn btn-primary btn-small" id="loginBtn" onclick="firebaseLogin()">Р  РІР‚в„ўР РЋРІР‚В¦Р  РЎвЂўР  РўвЂ</button>
             </div>
         </div>
-    </div>
 
-    <!-- Main App -->
-    <div id="appScreen" style="display: none;">
-        <div class="container">
-            <div class="header">
-                <h1>💪 Отжимания</h1>
-                <button class="btn btn-logout" onclick="handleLogout()">Выход</button>
-            </div>
-
-            <div id="maxTestAlert" class="card" style="display: none;">
-                <div class="alert alert-warning">
-                    ⚠️ После 500 отжиманий - нужна проверка максимума!
-                </div>
+        <div id="appSection" class="hidden">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+                <button class="btn btn-danger btn-small" onclick="logout()"
+                    style="width: auto; padding: 8px 12px;">Р  РІР‚в„ўР РЋРІР‚в„–Р РЋРІР‚В¦Р  РЎвЂўР  РўвЂ</button>
             </div>
 
             <div class="card">
-                <div class="section-title">🏋️ Добавить тренировку</div>
-                <div id="setsContainer"></div>
-                <button class="btn btn-primary btn-small" onclick="addSet()">➕ Добавить подход</button>
-                
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="saveWorkout()">✅ Записать</button>
-                    <button class="btn btn-danger" onclick="markMissed()">❌ Пропуск</button>
+                <div class="section-title">РЎР‚РЎСџРІР‚СљРІР‚В¦ Р  РЎв„ўР  Р’В°Р  Р’В»Р  Р’ВµР  Р вЂ¦Р  РўвЂР  Р’В°Р РЋР вЂљР РЋР Р‰ Р РЋРІР‚С™Р РЋР вЂљР  Р’ВµР  Р вЂ¦Р  РЎвЂР РЋР вЂљР  РЎвЂўР  Р вЂ Р  РЎвЂўР  РЎвЂќ</div>
+                <div class="month-header">
+                    <div class="month-nav">
+                        <button onclick="prevMonth()">Р Р†РІР‚вЂќР вЂљ</button>
+                        <button onclick="nextMonth()">Р Р†РІР‚вЂњР’В¶</button>
+                    </div>
+                    <div class="month-name" id="monthName"></div>
                 </div>
+                <div class="calendar" id="calendar"></div>
             </div>
 
             <div class="card">
-                <div class="section-title">⚡ Проверка максимума</div>
+                <div class="section-title">Р Р†РЎв„ўР Р‹ Р  РІР‚вЂќР  Р’В°Р  РЎвЂ”Р  РЎвЂР РЋРІвЂљВ¬Р  РЎвЂР РЋРІР‚С™Р  Р’Вµ Р РЋРІР‚С™Р РЋР вЂљР  Р’ВµР  Р вЂ¦Р  РЎвЂР РЋР вЂљР  РЎвЂўР  Р вЂ Р  РЎвЂќР РЋРЎвЂњ</div>
+                <div
+                    style="background: var(--bg); padding: 12px; border-radius: 10px; margin-bottom: 16px; text-align: center;">
+                    <p style="color: var(--text-light); font-size: 0.9em; margin: 0;">Р  РІР‚в„ўР РЋРІР‚в„–Р  Р’В±Р РЋР вЂљР  Р’В°Р  Р вЂ¦Р  Р вЂ¦Р  Р’В°Р РЋР РЏ Р  РўвЂР  Р’В°Р РЋРІР‚С™Р  Р’В°:</p>
+                    <p style="color: var(--text); font-weight: 700; margin: 4px 0; word-break: break-word;"
+                        id="selectedDateDisplay">-</p>
+                </div>
                 <div class="input-group">
-                    <input type="number" id="maxTestReps" class="form-input" placeholder="Макс отжиманий" min="0">
-                    <button class="btn btn-warning btn-small" onclick="saveMaxTest()">📊 Сохранить</button>
+                    <input type="time" id="workoutTime" placeholder="Р Р†Р РЏР’В° Р  РІР‚в„ўР РЋР вЂљР  Р’ВµР  РЎВР РЋР РЏ">
+                    
+                    <!-- Р  РЎСљР  РЎвЂўР  Р вЂ Р  РЎвЂўР  Р’Вµ: Р  РІР‚СљР  Р’В°Р  Р’В»Р  РЎвЂўР РЋРІР‚РЋР  РЎвЂќР  Р’В° Р  РўвЂР  Р’В»Р РЋР РЏ Р  РЎвЂўР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР  РІвЂћвЂ“ Р  РЎвЂўР РЋРІР‚С™ Р  РЎвЂќР  РЎвЂўР  Р’В»Р  Р’ВµР  Р вЂ¦Р  Р’ВµР  РІвЂћвЂ“ -->
+                    <div class="checkbox-row">
+                        <input type="checkbox" id="fromKnees" onchange="updateKneesStatus()">
+                        <label for="fromKnees">
+                            <div class="difficulty-name">Р  РЎвЂєР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР РЋР РЏ Р  РЎвЂўР РЋРІР‚С™ Р  РЎвЂќР  РЎвЂўР  Р’В»Р  Р’ВµР  Р вЂ¦Р  Р’ВµР  РІвЂћвЂ“ РЎР‚РЎСџР’В¦Р’Вµ</div>
+                            <div class="difficulty-desc">Р  РІР‚ВР  РЎвЂўР  Р’В»Р  Р’ВµР  Р’Вµ Р  РЎвЂ”Р РЋР вЂљР  РЎвЂўР РЋР С“Р РЋРІР‚С™Р  РЎвЂўР  РІвЂћвЂ“ Р  Р вЂ Р  Р’В°Р РЋР вЂљР  РЎвЂР  Р’В°Р  Р вЂ¦Р РЋРІР‚С™</div>
+                        </label>
+                    </div>
+
+                    <div id="setsContainer">
+                        <div class="set-row">
+                            <input type="number" class="set-input" placeholder="Р  РЎСџР  РЎвЂўР  Р вЂ Р РЋРІР‚С™Р  РЎвЂўР РЋР вЂљР  Р’ВµР  Р вЂ¦Р  РЎвЂР РЋР РЏ Р  РЎвЂ”Р  РЎвЂўР  РўвЂР РЋРІР‚В¦Р  РЎвЂўР  РўвЂР  Р’В° 1" min="0">
+                            <button class="delete-btn" onclick="deleteSet(this)">Р Р†РЎСљР Р‰</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-small" onclick="addSet()">Р Р†РЎвЂєРІР‚Сћ Р  РІР‚СњР  РЎвЂўР  Р’В±Р  Р’В°Р  Р вЂ Р  РЎвЂР РЋРІР‚С™Р РЋР Р‰ Р  РЎвЂ”Р  РЎвЂўР  РўвЂР РЋРІР‚В¦Р  РЎвЂўР  РўвЂ</button>
                 </div>
-                <div id="maxTestInfo" style="color: var(--text-light); text-align: center; padding: 12px;">
-                    Результаты максимум тестов здесь
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="saveWorkout()">Р Р†РЎС™РІР‚В¦ Р  РІР‚вЂќР  Р’В°Р  РЎвЂ”Р  РЎвЂР РЋР С“Р  Р’В°Р РЋРІР‚С™Р РЋР Р‰</button>
+                    <button class="btn btn-danger" onclick="markMissed()">Р Р†РЎСљР Р‰ Р  РЎСџР РЋР вЂљР  РЎвЂўР  РЎвЂ”Р РЋРЎвЂњР РЋР С“Р  РЎвЂќ</button>
                 </div>
             </div>
 
@@ -479,539 +612,738 @@
                 <div class="stats">
                     <div class="stat">
                         <div class="stat-value" id="totalPushups">0</div>
-                        <div class="stat-label">Всего отжиманий</div>
+                        <div class="stat-label">Р  РІР‚в„ўР РЋР С“Р  Р’ВµР  РЎвЂ“Р  РЎвЂў Р  РЎвЂўР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР  РІвЂћвЂ“</div>
                     </div>
                     <div class="stat">
                         <div class="stat-value" id="streak">0</div>
-                        <div class="stat-label">Серия дней</div>
+                        <div class="stat-label">Р  Р Р‹Р  Р’ВµР РЋР вЂљР  РЎвЂР РЋР РЏ Р  РўвЂР  Р вЂ¦Р  Р’ВµР  РІвЂћвЂ“</div>
                     </div>
                     <div class="stat">
                         <div class="stat-value" id="successDays">0</div>
-                        <div class="stat-label">Успешных дней</div>
+                        <div class="stat-label">Р  Р в‚¬Р РЋР С“Р  РЎвЂ”Р  Р’ВµР РЋРІвЂљВ¬Р  Р вЂ¦Р РЋРІР‚в„–Р РЋРІР‚В¦ Р  РўвЂР  Р вЂ¦Р  Р’ВµР  РІвЂћвЂ“</div>
                     </div>
                     <div class="stat">
                         <div class="stat-value" id="avgPerDay">0</div>
-                        <div class="stat-label">В день (средняя)</div>
+                        <div class="stat-label">Р  РІР‚в„ў Р  РўвЂР  Р’ВµР  Р вЂ¦Р РЋР Р‰ (Р РЋР С“Р РЋР вЂљР  Р’ВµР  РўвЂР  Р вЂ¦Р РЋР РЏР РЋР РЏ)</div>
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <div class="section-title">📅 Календарь</div>
-                <div class="input-group">
-                    <input type="month" id="monthSelect" class="form-input">
+                <div class="section-title">РЎР‚РЎСџРІР‚СљР вЂ° Р  Р’ВР РЋР С“Р РЋРІР‚С™Р  РЎвЂўР РЋР вЂљР  РЎвЂР РЋР РЏ Р  Р вЂ Р РЋРІР‚в„–Р  Р’В±Р РЋР вЂљР  Р’В°Р  Р вЂ¦Р  Р вЂ¦Р  РЎвЂўР  РІвЂћвЂ“ Р  РўвЂР  Р’В°Р РЋРІР‚С™Р РЋРІР‚в„–</div>
+                <div id="selectedDateInfo">
+                    <p style="color: var(--text-light); text-align: center;">Р  РІР‚в„ўР РЋРІР‚в„–Р  Р’В±Р  Р’ВµР РЋР вЂљР  РЎвЂР РЋРІР‚С™Р  Р’Вµ Р  РўвЂР  Р’В°Р РЋРІР‚С™Р РЋРЎвЂњ Р  Р вЂ  Р  РЎвЂќР  Р’В°Р  Р’В»Р  Р’ВµР  Р вЂ¦Р  РўвЂР  Р’В°Р РЋР вЂљР  Р’Вµ</p>
                 </div>
-                <div class="calendar" id="monthCalendar"></div>
             </div>
 
             <div class="card">
-                <div class="section-title">⚖️ Вес и тренд</div>
+                <div class="section-title">Р Р†РЎв„ўРІР‚вЂњР С—РЎвЂР РЏ Р  РІР‚в„ўР  Р’ВµР РЋР С“</div>
                 <div class="input-group">
-                    <input type="number" id="weight" class="form-input" placeholder="Вес, кг" step="0.1">
-                    <button class="btn btn-primary btn-small" onclick="saveWeight()">Сохранить</button>
+                    <input type="number" id="weight" placeholder="Р  РІР‚в„ўР  Р’ВµР РЋР С“, Р  РЎвЂќР  РЎвЂ“" step="0.1">
+                    <button class="btn btn-primary btn-small" onclick="saveWeight()">Р  Р Р‹Р  РЎвЂўР РЋРІР‚В¦Р РЋР вЂљР  Р’В°Р  Р вЂ¦Р  РЎвЂР РЋРІР‚С™Р РЋР Р‰ Р  Р вЂ Р  Р’ВµР РЋР С“</button>
                 </div>
-                <div id="weightTrend"></div>
+                <div id="weightInfo"
+                    style="margin-top: 12px; padding: 12px; background: var(--bg); border-radius: 10px; text-align: center;">
+                    <p style="color: var(--text-light); font-size: 0.9em;">Р  РЎСљР  Р’ВµР РЋРІР‚С™ Р  Р’В·Р  Р’В°Р  РЎвЂ”Р  РЎвЂР РЋР С“Р  Р’ВµР  РІвЂћвЂ“ Р  Р вЂ Р  Р’ВµР РЋР С“Р  Р’В°</p>
+                </div>
             </div>
 
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <div class="section-title" style="margin-bottom: 0;">📈 График отжиманий</div>
-                    <select id="chartPeriod" onchange="updateChart()" style="padding: 8px 12px; border: 2px solid var(--border); border-radius: 8px; background: var(--bg); cursor: pointer;">
-                        <option value="7">7 дней</option>
-                        <option value="14">14 дней</option>
-                        <option value="30">30 дней</option>
-                        <option value="all">Все</option>
+                    <div class="section-title" style="margin-bottom: 0;">РЎР‚РЎСџРІР‚СљРІвЂљВ¬ Р  РІР‚СљР РЋР вЂљР  Р’В°Р РЋРІР‚С›Р  РЎвЂР  РЎвЂќ Р  РЎвЂўР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР  РІвЂћвЂ“ (Р  РЎвЂ”Р  РЎвЂўР РЋР С“Р  Р’В»Р  Р’ВµР  РўвЂР  Р вЂ¦Р  РЎвЂР  Р’Вµ 7 Р  РўвЂР  Р вЂ¦Р  Р’ВµР  РІвЂћвЂ“)</div>
+                    <select id="chartPeriod" onchange="updateChartPeriod()"
+                        style="padding: 8px 12px; border: 2px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 0.9em; cursor: pointer;">
+                        <option value="7">Р  РЎСџР  РЎвЂўР РЋР С“Р  Р’В»Р  Р’ВµР  РўвЂР  Р вЂ¦Р  РЎвЂР  Р’Вµ 7 Р  РўвЂР  Р вЂ¦Р  Р’ВµР  РІвЂћвЂ“</option>
+                        <option value="14">Р  РЎСџР  РЎвЂўР РЋР С“Р  Р’В»Р  Р’ВµР  РўвЂР  Р вЂ¦Р  РЎвЂР  Р’Вµ 14 Р  РўвЂР  Р вЂ¦Р  Р’ВµР  РІвЂћвЂ“</option>
+                        <option value="30">Р  РЎСџР  РЎвЂўР РЋР С“Р  Р’В»Р  Р’ВµР  РўвЂР  Р вЂ¦Р  РЎвЂР  Р’Вµ 30 Р  РўвЂР  Р вЂ¦Р  Р’ВµР  РІвЂћвЂ“</option>
+                        <option value="all">Р  РІР‚в„ўР РЋР С“Р  Р’Вµ Р РЋРІР‚С™Р РЋР вЂљР  Р’ВµР  Р вЂ¦Р  РЎвЂР РЋР вЂљР  РЎвЂўР  Р вЂ Р  РЎвЂќР  РЎвЂ</option>
                     </select>
                 </div>
-                <div class="chart-container" id="chart"></div>
-            </div>
-
-            <div class="card">
-                <div class="section-title">📊 График максимума</div>
-                <div id="maxTestChart"></div>
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;" id="chart"></div>
             </div>
         </div>
     </div>
 
+    <!-- Р  РЎС™Р  РЎвЂўР  РўвЂР  Р’В°Р  Р’В»Р РЋР Р‰Р  Р вЂ¦Р  РЎвЂўР  Р’Вµ Р  РЎвЂўР  РЎвЂќР  Р вЂ¦Р  РЎвЂў Р  РўвЂР  Р’В»Р РЋР РЏ Р  Р вЂ Р РЋРІР‚в„–Р  Р’В±Р  РЎвЂўР РЋР вЂљР  Р’В° Р РЋР С“Р  Р’В»Р  РЎвЂўР  Р’В¶Р  Р вЂ¦Р  РЎвЂўР РЋР С“Р РЋРІР‚С™Р  РЎвЂ -->
+    <div id="difficultyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">РЎР‚РЎСџР вЂ№Р вЂЎ Р  РІР‚в„ўР РЋРІР‚в„–Р  Р’В±Р  Р’ВµР РЋР вЂљР  РЎвЂР РЋРІР‚С™Р  Р’Вµ Р РЋР С“Р  Р’В»Р  РЎвЂўР  Р’В¶Р  Р вЂ¦Р  РЎвЂўР РЋР С“Р РЋРІР‚С™Р РЋР Р‰ Р РЋРЎвЂњР  РЎвЂ”Р РЋР вЂљР  Р’В°Р  Р’В¶Р  Р вЂ¦Р  Р’ВµР  Р вЂ¦Р  РЎвЂР  РІвЂћвЂ“</div>
+            
+            <label class="difficulty-option">
+                <input type="radio" name="difficulty" value="easy" checked>
+                <div class="difficulty-label">
+                    <div class="difficulty-name">РЎР‚РЎСџР’ВР вЂ° Р  РІР‚С”Р  Р’ВµР  РЎвЂ“Р  РЎвЂќР  РЎвЂР  Р’Вµ</div>
+                    <div class="difficulty-desc">Р  РЎвЂєР РЋРІР‚С™ Р  РЎвЂќР  РЎвЂўР  Р’В»Р  Р’ВµР  Р вЂ¦Р  Р’ВµР  РІвЂћвЂ“, Р  Р вЂ¦Р  РЎвЂўР  Р вЂ Р  РЎвЂР РЋРІР‚РЋР  РЎвЂќР  Р’В°Р  РЎВ Р  РЎвЂР  Р’В»Р  РЎвЂ Р  РЎвЂ”Р РЋР вЂљР  РЎвЂ Р  Р’В±Р  РЎвЂўР  Р’В»Р РЋР РЏР РЋРІР‚В¦</div>
+                </div>
+            </label>
+
+            <label class="difficulty-option">
+                <input type="radio" name="difficulty" value="medium">
+                <div class="difficulty-label">
+                    <div class="difficulty-name">РЎР‚РЎСџРІР‚в„ўР вЂћ Р  Р Р‹Р РЋР вЂљР  Р’ВµР  РўвЂР  Р вЂ¦Р  РЎвЂР  Р’Вµ</div>
+                    <div class="difficulty-desc">Р  Р Р‹Р РЋРІР‚С™Р  Р’В°Р  Р вЂ¦Р  РўвЂР  Р’В°Р РЋР вЂљР РЋРІР‚С™Р  Р вЂ¦Р РЋРІР‚в„–Р  Р’Вµ Р  РЎвЂўР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР РЋР РЏ</div>
+                </div>
+            </label>
+
+            <label class="difficulty-option">
+                <input type="radio" name="difficulty" value="hard">
+                <div class="difficulty-label">
+                    <div class="difficulty-name">РЎР‚РЎСџРІР‚СњРўС’ Р  Р Р‹Р  Р’В»Р  РЎвЂўР  Р’В¶Р  Р вЂ¦Р РЋРІР‚в„–Р  Р’Вµ</div>
+                    <div class="difficulty-desc">Р  РЎвЂєР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР РЋР РЏ Р РЋР С“ Р  РўвЂР  РЎвЂўР  РЎвЂ”Р  РЎвЂўР  Р’В»Р  Р вЂ¦Р  РЎвЂР РЋРІР‚С™Р  Р’ВµР  Р’В»Р РЋР Р‰Р  Р вЂ¦Р  РЎвЂўР  РІвЂћвЂ“ Р  Р вЂ¦Р  Р’В°Р  РЎвЂ“Р РЋР вЂљР РЋРЎвЂњР  Р’В·Р  РЎвЂќР  РЎвЂўР  РІвЂћвЂ“</div>
+                </div>
+            </label>
+
+            <div class="modal-buttons">
+                <button class="btn btn-danger btn-small" onclick="closeDifficultyModal()">Р  РЎвЂєР РЋРІР‚С™Р  РЎВР  Р’ВµР  Р вЂ¦Р  Р’В°</button>
+                <button class="btn btn-primary btn-small" onclick="confirmDifficulty()">Р  РЎСџР  РЎвЂўР  РўвЂР РЋРІР‚С™Р  Р вЂ Р  Р’ВµР РЋР вЂљР  РўвЂР  РЎвЂР РЋРІР‚С™Р РЋР Р‰</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <script>
-        // Firebase Configuration - ДОБАВЬТЕ СВОЙ КОНФИГ ОТСЮДА: https://console.firebase.google.com/
         const firebaseConfig = {
-            apiKey: "AIzaSyDemoKeyChange123456789",
-            authDomain: "demo-project.firebaseapp.com",
-            projectId: "demo-project",
-            storageBucket: "demo-project.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abc123def456"
+            apiKey: "AIzaSyCF6dkvdzAk2LqhjkX3VYos9xwHHAK7D5s",
+            authDomain: "pushups-tracker-8ee95.firebaseapp.com",
+            databaseURL: "https://pushups-tracker-8ee95-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "pushups-tracker-8ee95",
+            storageBucket: "pushups-tracker-8ee95.firebasestorage.app",
+            messagingSenderId: "546118879090",
+            appId: "1:546118879090:web:8592103d5f94952ab3bfeb"
         };
 
-        let app, auth, db, currentUser;
-        let isSignupMode = false;
+        let firebaseUser = null;
+        let currentUser = null;
+        let data = { workouts: [], weights: [] };
+        let selectedDate = new Date().toDateString();
+        let currentMonth = new Date();
+        let pendingWorkout = null;
 
-        // Initialize Firebase
-        try {
-            app = firebase.initializeApp(firebaseConfig);
-            auth = firebase.auth();
-            db = firebase.firestore();
-        } catch (e) {
-            console.log("Используется локальный режим (Firebase не настроен)");
-            useLocalStorage = true;
-        }
-
-        let useLocalStorage = false;
-
-        // Auth State
-        if (auth) {
-            auth.onAuthStateChanged((user) => {
-                currentUser = user;
-                if (user) {
-                    showAppScreen();
-                    init();
-                } else {
-                    showAuthScreen();
+        function initFirebase() {
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                    console.log('Р Р†РЎС™РІР‚В¦ Firebase Р  РЎвЂР  Р вЂ¦Р  РЎвЂР РЋРІР‚ Р  РЎвЂР  Р’В°Р  Р’В»Р  РЎвЂР  Р’В·Р  РЎвЂР РЋР вЂљР  РЎвЂўР  Р вЂ Р  Р’В°Р  Р вЂ¦');
                 }
-            });
+                return true;
+            } catch (error) {
+                console.error('Р Р†РЎСљР Р‰ Firebase Р  РЎвЂўР РЋРІвЂљВ¬Р  РЎвЂР  Р’В±Р  РЎвЂќР  Р’В°:', error);
+                return false;
+            }
         }
 
-        function showAuthScreen() {
-            document.getElementById('authScreen').style.display = 'flex';
-            document.getElementById('appScreen').style.display = 'none';
+        function showFirebaseError(message) {
+            const msgDiv = document.getElementById('firebaseMessage');
+            if (!msgDiv) {
+                console.error('firebaseMessage not found');
+                alert(String(message));
+                return;
+            }
+
+            let displayMsg = message;
+            if (typeof message === 'object') {
+                displayMsg = message.message || JSON.stringify(message);
+            }
+
+            displayMsg = String(displayMsg).trim();
+            msgDiv.textContent = displayMsg;
+            msgDiv.classList.remove('hidden');
+            msgDiv.classList.add('error-message');
         }
 
-        function showAppScreen() {
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('appScreen').style.display = 'block';
-        }
+        function firebaseRegister() {
+            document.getElementById('firebaseMessage').textContent = '';
+            document.getElementById('firebaseMessage').classList.add('hidden');
 
-        function toggleAuthMode() {
-            isSignupMode = !isSignupMode;
-            document.getElementById('loginBtn').textContent = isSignupMode ? 'Зарегистрироваться' : 'Вход';
-            document.getElementById('signupBtn').textContent = isSignupMode ? 'Есть аккаунт? Вход' : 'Нет аккаунта? Регистрация';
-        }
+            if (!initFirebase()) {
+                showFirebaseError('Firebase Р  Р вЂ¦Р  Р’ВµР  РўвЂР  РЎвЂўР РЋР С“Р РЋРІР‚С™Р РЋРЎвЂњР  РЎвЂ”Р  Р’ВµР  Р вЂ¦');
+                return;
+            }
 
-        async function handleLogin() {
-            const email = document.getElementById('authEmail').value;
-            const password = document.getElementById('authPassword').value;
-            const errorDiv = document.getElementById('authError');
+            const email = document.getElementById('firebaseEmail').value.trim();
+            const password = document.getElementById('firebasePassword').value.trim();
 
             if (!email || !password) {
-                errorDiv.textContent = 'Заполните все поля';
-                errorDiv.style.display = 'block';
+                showFirebaseError('Р  РІР‚в„ўР  Р вЂ Р  Р’ВµР  РўвЂР  РЎвЂР РЋРІР‚С™Р  Р’Вµ email Р  РЎвЂ Р  РЎвЂ”Р  Р’В°Р РЋР вЂљР  РЎвЂўР  Р’В»Р РЋР Р‰');
                 return;
             }
 
-            try {
-                if (isSignupMode) {
-                    await auth.createUserWithEmailAndPassword(email, password);
-                } else {
-                    await auth.signInWithEmailAndPassword(email, password);
-                }
-                errorDiv.style.display = 'none';
-            } catch (error) {
-                errorDiv.textContent = error.message;
-                errorDiv.style.display = 'block';
-            }
-        }
-
-        function handleLogout() {
-            auth.signOut();
-            document.getElementById('authEmail').value = '';
-            document.getElementById('authPassword').value = '';
-            document.getElementById('authError').style.display = 'none';
-        }
-
-        // Data Management
-        async function getWorkouts() {
-            if (useLocalStorage) {
-                return JSON.parse(localStorage.getItem('workouts') || '{}');
-            }
-            const doc = await db.collection('users').doc(currentUser.uid).collection('workouts').doc('data').get();
-            return doc.exists ? doc.data().workouts || {} : {};
-        }
-
-        async function saveWorkouts(data) {
-            if (useLocalStorage) {
-                localStorage.setItem('workouts', JSON.stringify(data));
-                return;
-            }
-            await db.collection('users').doc(currentUser.uid).collection('workouts').doc('data').set({ workouts: data }, { merge: true });
-        }
-
-        async function getWeights() {
-            if (useLocalStorage) {
-                return JSON.parse(localStorage.getItem('weights') || '[]');
-            }
-            const doc = await db.collection('users').doc(currentUser.uid).collection('data').doc('weights').get();
-            return doc.exists ? doc.data().weights || [] : [];
-        }
-
-        async function saveWeights(data) {
-            if (useLocalStorage) {
-                localStorage.setItem('weights', JSON.stringify(data));
-                return;
-            }
-            await db.collection('users').doc(currentUser.uid).collection('data').doc('weights').set({ weights: data }, { merge: true });
-        }
-
-        async function getMaxTests() {
-            if (useLocalStorage) {
-                return JSON.parse(localStorage.getItem('maxTests') || '[]');
-            }
-            const doc = await db.collection('users').doc(currentUser.uid).collection('data').doc('maxTests').get();
-            return doc.exists ? doc.data().maxTests || [] : [];
-        }
-
-        async function saveMaxTests(data) {
-            if (useLocalStorage) {
-                localStorage.setItem('maxTests', JSON.stringify(data));
-                return;
-            }
-            await db.collection('users').doc(currentUser.uid).collection('data').doc('maxTests').set({ maxTests: data }, { merge: true });
-        }
-
-        // App Functions
-        async function init() {
-            const now = new Date();
-            document.getElementById('monthSelect').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-            
-            addSet();
-            renderMonthCalendar();
-            updateStats();
-            updateChart();
-            updateMaxTestChart();
-            updateMaxTestAlert();
-            updateWeightTrend();
-        }
-
-        function addSet() {
-            const container = document.getElementById('setsContainer');
-            const setNum = container.children.length + 1;
-            const setRow = document.createElement('div');
-            setRow.className = 'set-row';
-            setRow.innerHTML = `
-                <input type="number" class="set-input" placeholder="Повторения подхода ${setNum}" min="0">
-                <select class="difficulty-select">
-                    <option value="regular">Обычные</option>
-                    <option value="knee">От колен</option>
-                </select>
-                <div style="font-size: 0.9em; color: var(--text-light); text-align: center;" class="set-difficulty-label">Обычные</div>
-                <button class="delete-btn" onclick="deleteSet(this)">❌</button>
-            `;
-            
-            const select = setRow.querySelector('.difficulty-select');
-            const label = setRow.querySelector('.set-difficulty-label');
-            select.addEventListener('change', () => {
-                label.textContent = select.value === 'knee' ? 'От колен' : 'Обычные';
-            });
-            
-            container.appendChild(setRow);
-        }
-
-        function deleteSet(btn) {
-            btn.closest('.set-row').remove();
-        }
-
-        async function saveWorkout() {
-            const rows = document.querySelectorAll('.set-row');
-            if (rows.length === 0) {
-                alert('Добавьте хотя бы один подход');
+            if (password.length < 6) {
+                showFirebaseError('Р  РЎСџР  Р’В°Р РЋР вЂљР  РЎвЂўР  Р’В»Р РЋР Р‰ Р  РЎВР  РЎвЂР  Р вЂ¦Р  РЎвЂР  РЎВР РЋРЎвЂњР  РЎВ 6 Р РЋР С“Р  РЎвЂР  РЎВР  Р вЂ Р  РЎвЂўР  Р’В»Р  РЎвЂўР  Р вЂ ');
                 return;
             }
 
-            let totalReps = 0;
-            const setDetails = [];
+            const registerBtn = document.getElementById('registerBtn');
+            if (registerBtn) {
+                registerBtn.disabled = true;
+                registerBtn.textContent = 'Р  РІР‚вЂќР  Р’В°Р  РЎвЂ“Р РЋР вЂљР РЋРЎвЂњР  Р’В·Р  РЎвЂќР  Р’В°...';
+            }
 
-            rows.forEach((row) => {
-                const input = row.querySelector('.set-input');
-                const difficulty = row.querySelector('.difficulty-select').value;
-                const reps = parseInt(input.value) || 0;
-                totalReps += reps;
-                setDetails.push({ reps, difficulty });
-            });
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    console.log('Р Р†РЎС™РІР‚В¦ User created:', userCredential.user.uid);
+                    firebaseUser = userCredential.user;
+                    currentUser = firebaseUser.uid;
 
-            if (totalReps === 0) {
-                alert('Введите количество повторений');
+                    firebaseUser.sendEmailVerification()
+                        .then(() => {
+                            showFirebaseError('Р Р†РЎС™РІР‚В¦ Р  РЎвЂ™Р  РЎвЂќР  РЎвЂќР  Р’В°Р РЋРЎвЂњР  Р вЂ¦Р РЋРІР‚С™ Р РЋР С“Р  РЎвЂўР  Р’В·Р  РўвЂР  Р’В°Р  Р вЂ¦! Р  РЎСџР  РЎвЂР РЋР С“Р РЋР Р‰Р  РЎВР  РЎвЂў Р  РЎвЂўР РЋРІР‚С™Р  РЎвЂ”Р РЋР вЂљР  Р’В°Р  Р вЂ Р  Р’В»Р  Р’ВµР  Р вЂ¦Р  РЎвЂў Р  Р вЂ¦Р  Р’В° ' + email);
+                            setTimeout(() => {
+                                document.getElementById('authSection').classList.add('hidden');
+                                document.getElementById('appSection').classList.remove('hidden');
+                                loadFirebaseData();
+                            }, 2000);
+                        })
+                        .catch(() => {
+                            showFirebaseError('Р Р†РЎС™РІР‚В¦ Р  РЎвЂ™Р  РЎвЂќР  РЎвЂќР  Р’В°Р РЋРЎвЂњР  Р вЂ¦Р РЋРІР‚С™ Р РЋР С“Р  РЎвЂўР  Р’В·Р  РўвЂР  Р’В°Р  Р вЂ¦!');
+                            setTimeout(() => {
+                                document.getElementById('authSection').classList.add('hidden');
+                                document.getElementById('appSection').classList.remove('hidden');
+                                loadFirebaseData();
+                            }, 2000);
+                        });
+
+                    if (registerBtn) {
+                        registerBtn.disabled = false;
+                        registerBtn.textContent = 'Р   Р  Р’ВµР  РЎвЂ“Р  РЎвЂР РЋР С“Р РЋРІР‚С™Р РЋР вЂљР  Р’В°Р РЋРІР‚ Р  РЎвЂР РЋР РЏ';
+                    }
+                })
+                .catch(error => {
+                    let msg = 'Р  РЎвЂєР РЋРІвЂљВ¬Р  РЎвЂР  Р’В±Р  РЎвЂќР  Р’В° Р РЋР вЂљР  Р’ВµР  РЎвЂ“Р  РЎвЂР РЋР С“Р РЋРІР‚С™Р РЋР вЂљР  Р’В°Р РЋРІР‚ Р  РЎвЂР  РЎвЂ';
+                    if (error.code === 'auth/email-already-in-use') msg = 'Email Р РЋРЎвЂњР  Р’В¶Р  Р’Вµ Р  Р’В·Р  Р’В°Р РЋР вЂљР  Р’ВµР  РЎвЂ“Р  РЎвЂР РЋР С“Р РЋРІР‚С™Р РЋР вЂљР  РЎвЂР РЋР вЂљР  РЎвЂўР  Р вЂ Р  Р’В°Р  Р вЂ¦';
+                    else if (error.code === 'auth/invalid-email') msg = 'Р  РЎСљР  Р’ВµР  Р вЂ Р  Р’ВµР РЋР вЂљР  Р вЂ¦Р РЋРІР‚в„–Р  РІвЂћвЂ“ email';
+                    else if (error.code === 'auth/weak-password') msg = 'Р  Р Р‹Р  Р’В»Р  Р’В°Р  Р’В±Р РЋРІР‚в„–Р  РІвЂћвЂ“ Р  РЎвЂ”Р  Р’В°Р РЋР вЂљР  РЎвЂўР  Р’В»Р РЋР Р‰ (Р  РЎВР  РЎвЂР  Р вЂ¦Р  РЎвЂР  РЎВР РЋРЎвЂњР  РЎВ 6 Р РЋР С“Р  РЎвЂР  РЎВР  Р вЂ Р  РЎвЂўР  Р’В»Р  РЎвЂўР  Р вЂ )';
+                    else if (error.message) msg = error.message;
+
+                    showFirebaseError(msg);
+
+                    if (registerBtn) {
+                        registerBtn.disabled = false;
+                        registerBtn.textContent = 'Р   Р  Р’ВµР  РЎвЂ“Р  РЎвЂР РЋР С“Р РЋРІР‚С™Р РЋР вЂљР  Р’В°Р РЋРІР‚ Р  РЎвЂР РЋР РЏ';
+                    }
+                });
+        }
+
+        function firebaseLogin() {
+            document.getElementById('firebaseMessage').textContent = '';
+            document.getElementById('firebaseMessage').classList.add('hidden');
+
+            if (!initFirebase()) {
+                showFirebaseError('Firebase Р  Р вЂ¦Р  Р’ВµР  РўвЂР  РЎвЂўР РЋР С“Р РЋРІР‚С™Р РЋРЎвЂњР  РЎвЂ”Р  Р’ВµР  Р вЂ¦');
                 return;
             }
 
-            const today = new Date().toISOString().split('T')[0];
-            const workouts = await getWorkouts();
-            workouts[today] = { reps: totalReps, sets: setDetails, type: 'regular', timestamp: Date.now() };
-            await saveWorkouts(workouts);
+            const email = document.getElementById('firebaseEmail').value.trim();
+            const password = document.getElementById('firebasePassword').value.trim();
 
-            clearSetInputs();
-            updateStats();
-            renderMonthCalendar();
-            updateChart();
-            updateMaxTestAlert();
-            alert(`✅ Записано ${totalReps} отжиманий!`);
-        }
-
-        async function saveMaxTest() {
-            const input = document.getElementById('maxTestReps');
-            const reps = parseInt(input.value);
-
-            if (!reps || reps < 0) {
-                alert('Введите корректное количество');
+            if (!email || !password) {
+                showFirebaseError('Р  РІР‚в„ўР  Р вЂ Р  Р’ВµР  РўвЂР  РЎвЂР РЋРІР‚С™Р  Р’Вµ email Р  РЎвЂ Р  РЎвЂ”Р  Р’В°Р РЋР вЂљР  РЎвЂўР  Р’В»Р РЋР Р‰');
                 return;
             }
 
-            const today = new Date().toISOString().split('T')[0];
-            const maxTests = await getMaxTests();
-            maxTests.push({ date: today, reps, timestamp: Date.now() });
-            await saveMaxTests(maxTests);
+            const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
 
-            const workouts = await getWorkouts();
-            workouts[today] = { reps, sets: [{ reps, difficulty: 'regular' }], type: 'max_test', timestamp: Date.now() };
-            await saveWorkouts(workouts);
+            if (loginBtn) {
+                loginBtn.disabled = true;
+                loginBtn.textContent = 'Р  РІР‚вЂќР  Р’В°Р  РЎвЂ“Р РЋР вЂљР РЋРЎвЂњР  Р’В·Р  РЎвЂќР  Р’В°...';
+            }
+            if (registerBtn) registerBtn.disabled = true;
 
-            input.value = '';
-            updateStats();
-            renderMonthCalendar();
-            updateChart();
-            updateMaxTestAlert();
-            updateMaxTestChart();
-            alert('✅ Максимум записан!');
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    console.log('Р Р†РЎС™РІР‚В¦ User logged in:', userCredential.user.uid);
+                    firebaseUser = userCredential.user;
+                    currentUser = firebaseUser.uid;
+
+                    document.getElementById('authSection').classList.add('hidden');
+                    document.getElementById('appSection').classList.remove('hidden');
+
+                    setTimeout(() => {
+                        loadFirebaseData();
+                    }, 300);
+                })
+                .catch(error => {
+                    let msg = 'Р  РЎвЂєР РЋРІвЂљВ¬Р  РЎвЂР  Р’В±Р  РЎвЂќР  Р’В° Р  Р вЂ Р РЋРІР‚В¦Р  РЎвЂўР  РўвЂР  Р’В°';
+                    if (error.code === 'auth/user-not-found') msg = 'Р  РЎСџР  РЎвЂўР  Р’В»Р РЋР Р‰Р  Р’В·Р  РЎвЂўР  Р вЂ Р  Р’В°Р РЋРІР‚С™Р  Р’ВµР  Р’В»Р РЋР Р‰ Р  Р вЂ¦Р  Р’Вµ Р  Р вЂ¦Р  Р’В°Р  РІвЂћвЂ“Р  РўвЂР  Р’ВµР  Р вЂ¦';
+                    else if (error.code === 'auth/wrong-password') msg = 'Р  РЎСљР  Р’ВµР  Р вЂ Р  Р’ВµР РЋР вЂљР  Р вЂ¦Р РЋРІР‚в„–Р  РІвЂћвЂ“ Р  РЎвЂ”Р  Р’В°Р РЋР вЂљР  РЎвЂўР  Р’В»Р РЋР Р‰';
+                    else if (error.code === 'auth/invalid-email') msg = 'Р  РЎСљР  Р’ВµР  Р вЂ Р  Р’ВµР РЋР вЂљР  Р вЂ¦Р РЋРІР‚в„–Р  РІвЂћвЂ“ email';
+                    else if (error.code === 'auth/invalid-login-credentials') msg = 'Р  РЎСљР  Р’ВµР  Р вЂ Р  Р’ВµР РЋР вЂљР  Р вЂ¦Р РЋРІР‚в„–Р  РІвЂћвЂ“ Р  Р’В»Р  РЎвЂўР  РЎвЂ“Р  РЎвЂР  Р вЂ¦ Р  РЎвЂР  Р’В»Р  РЎвЂ Р  РЎвЂ”Р  Р’В°Р РЋР вЂљР  РЎвЂўР  Р’В»Р РЋР Р‰';
+                    else if (error.code === 'auth/internal-error') msg = 'Р  РЎСљР  Р’ВµР  Р вЂ Р  Р’ВµР РЋР вЂљР  Р вЂ¦Р РЋРІР‚в„–Р  РІвЂћвЂ“ Р  Р’В»Р  РЎвЂўР  РЎвЂ“Р  РЎвЂР  Р вЂ¦ Р  РЎвЂР  Р’В»Р  РЎвЂ Р  РЎвЂ”Р  Р’В°Р РЋР вЂљР  РЎвЂўР  Р’В»Р РЋР Р‰';
+                    else if (error.code === 'auth/user-disabled') msg = 'Р  РЎвЂ™Р  РЎвЂќР  РЎвЂќР  Р’В°Р РЋРЎвЂњР  Р вЂ¦Р РЋРІР‚С™ Р  РЎвЂўР РЋРІР‚С™Р  РЎвЂќР  Р’В»Р РЋР вЂ№Р РЋРІР‚РЋР  Р’ВµР  Р вЂ¦';
+                    else msg = 'Р  РЎСљР  Р’ВµР  Р вЂ Р  Р’ВµР РЋР вЂљР  Р вЂ¦Р РЋРІР‚в„–Р  РІвЂћвЂ“ Р  Р’В»Р  РЎвЂўР  РЎвЂ“Р  РЎвЂР  Р вЂ¦ Р  РЎвЂР  Р’В»Р  РЎвЂ Р  РЎвЂ”Р  Р’В°Р РЋР вЂљР  РЎвЂўР  Р’В»Р РЋР Р‰';
+
+                    showFirebaseError(msg);
+
+                    if (loginBtn) {
+                        loginBtn.disabled = false;
+                        loginBtn.textContent = 'Р  РІР‚в„ўР РЋРІР‚В¦Р  РЎвЂўР  РўвЂ';
+                    }
+                    if (registerBtn) registerBtn.disabled = false;
+                });
         }
 
-        async function markMissed() {
-            const today = new Date().toISOString().split('T')[0];
-            const workouts = await getWorkouts();
-            workouts[today] = { reps: 0, sets: [], type: 'missed', timestamp: Date.now() };
-            await saveWorkouts(workouts);
+        function logout() {
+            console.log('Logging out...');
 
-            clearSetInputs();
-            updateStats();
-            renderMonthCalendar();
-            updateChart();
-            alert('⚠️ День помечен как пропущенный');
+            firebaseUser = null;
+            currentUser = null;
+            data = { workouts: [], weights: [] };
+
+            firebase.auth().signOut()
+                .then(() => {
+                    console.log('Р Р†РЎС™РІР‚В¦ Signed out successfully');
+
+                    document.getElementById('firebaseEmail').value = '';
+                    document.getElementById('firebasePassword').value = '';
+                    document.getElementById('firebaseMessage').textContent = '';
+                    document.getElementById('firebaseMessage').classList.add('hidden');
+                    document.getElementById('firebaseMessage').classList.remove('error-message');
+
+                    const loginBtn = document.getElementById('loginBtn');
+                    const registerBtn = document.getElementById('registerBtn');
+                    if (loginBtn) {
+                        loginBtn.disabled = false;
+                        loginBtn.textContent = 'Р  РІР‚в„ўР РЋРІР‚В¦Р  РЎвЂўР  РўвЂ';
+                    }
+                    if (registerBtn) {
+                        registerBtn.disabled = false;
+                        registerBtn.textContent = 'Р   Р  Р’ВµР  РЎвЂ“Р  РЎвЂР РЋР С“Р РЋРІР‚С™Р РЋР вЂљР  Р’В°Р РЋРІР‚ Р  РЎвЂР РЋР РЏ';
+                    }
+
+                    document.getElementById('appSection').classList.add('hidden');
+                    document.getElementById('authSection').classList.remove('hidden');
+                    console.log('Р Р†РЎС™РІР‚В¦ UI reset to login screen');
+                })
+                .catch(error => {
+                    console.error('Р Р†РЎСљР Р‰ Logout error:', error);
+                    document.getElementById('appSection').classList.add('hidden');
+                    document.getElementById('authSection').classList.remove('hidden');
+                    alert('Р  РЎвЂєР РЋРІвЂљВ¬Р  РЎвЂР  Р’В±Р  РЎвЂќР  Р’В° Р  РЎвЂ”Р РЋР вЂљР  РЎвЂ Р  Р вЂ Р РЋРІР‚в„–Р РЋРІР‚В¦Р  РЎвЂўР  РўвЂР  Р’Вµ, Р  Р вЂ¦Р  РЎвЂў Р  Р вЂ Р РЋРІР‚в„– Р  Р вЂ Р РЋРІР‚в„–Р РЋРІвЂљВ¬Р  Р’В»Р  РЎвЂ Р  РЎвЂР  Р’В· Р РЋР С“Р  РЎвЂР РЋР С“Р РЋРІР‚С™Р  Р’ВµР  РЎВР РЋРІР‚в„–');
+                });
         }
 
-        function clearSetInputs() {
-            document.querySelectorAll('.set-input').forEach(input => input.value = '');
-        }
+        function loadFirebaseData() {
+            console.log('Loading Firebase data...');
 
-        async function saveWeight() {
-            const input = document.getElementById('weight');
-            const weight = parseFloat(input.value);
-
-            if (!weight || weight <= 0) {
-                alert('Введите вес');
+            if (!firebase.auth().currentUser) {
+                console.error('No user logged in');
+                data = { workouts: [], weights: [] };
+                renderMonth();
+                selectDate(selectedDate);
+                updateStats();
                 return;
             }
 
-            const today = new Date().toISOString().split('T')[0];
-            const weights = await getWeights();
-            weights.push({ date: today, weight, timestamp: Date.now() });
-            await saveWeights(weights);
+            const userId = firebase.auth().currentUser.uid;
+            console.log('Loading data for user:', userId);
 
-            input.value = '';
-            updateWeightTrend();
-            alert('✅ Вес записан!');
+            firebase.database().ref('users/' + userId).once('value')
+                .then(snapshot => {
+                    console.log('Р Р†РЎС™РІР‚В¦ Snapshot received');
+                    if (snapshot.exists()) {
+                        data = snapshot.val();
+                        console.log('Р Р†РЎС™РІР‚В¦ Data loaded from Firebase');
+                    } else {
+                        data = { workouts: [], weights: [] };
+                        console.log('No data found, starting fresh');
+                    }
+                    renderMonth();
+                    selectDate(selectedDate);
+                    updateStats();
+                })
+                .catch(error => {
+                    console.error('Р Р†РЎСљР Р‰ Load error:', error);
+                    data = { workouts: [], weights: [] };
+                    renderMonth();
+                    selectDate(selectedDate);
+                    updateStats();
+                });
         }
 
-        async function updateMaxTestAlert() {
-            const workouts = await getWorkouts();
-            const total = Object.values(workouts).reduce((sum, w) => sum + (w.reps || 0), 0);
-            const alert = document.getElementById('maxTestAlert');
-            
-            if (total >= 500 && total % 500 >= 450) {
-                alert.style.display = 'block';
-            } else {
-                alert.style.display = 'none';
+        function saveUserData() {
+            if (!firebase.auth().currentUser) {
+                console.error('No user logged in');
+                return;
             }
+
+            const userId = firebase.auth().currentUser.uid;
+            firebase.database().ref('users/' + userId).set(data)
+                .then(() => {
+                    console.log('Р Р†РЎС™РІР‚В¦ Data saved to Firebase');
+                })
+                .catch(error => {
+                    console.error('Р Р†РЎСљР Р‰ Save error:', error);
+                    alert('Р  РЎвЂєР РЋРІвЂљВ¬Р  РЎвЂР  Р’В±Р  РЎвЂќР  Р’В° Р РЋР С“Р  РЎвЂўР РЋРІР‚В¦Р РЋР вЂљР  Р’В°Р  Р вЂ¦Р  Р’ВµР  Р вЂ¦Р  РЎвЂР РЋР РЏ Р  РўвЂР  Р’В°Р  Р вЂ¦Р  Р вЂ¦Р РЋРІР‚в„–Р РЋРІР‚В¦');
+                });
         }
 
-        async function updateStats() {
-            const workouts = await getWorkouts();
-            const workoutEntries = Object.entries(workouts).sort((a, b) => a[0].localeCompare(b[0]));
-            
-            let total = 0;
-            let successDays = 0;
-            let streak = 0;
-            let currentStreak = 0;
+        function prevMonth() {
+            currentMonth.setMonth(currentMonth.getMonth() - 1);
+            renderMonth();
+        }
 
-            workoutEntries.forEach(([date, data]) => {
-                if (data.type !== 'missed') {
-                    total += data.reps || 0;
-                    successDays += 1;
-                    currentStreak += 1;
-                    streak = Math.max(streak, currentStreak);
-                } else {
-                    currentStreak = 0;
-                }
+        function nextMonth() {
+            currentMonth.setMonth(currentMonth.getMonth() + 1);
+            renderMonth();
+        }
+
+        function renderMonth() {
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
+            const monthNames = ['Р  Р вЂЎР  Р вЂ¦Р  Р вЂ Р  Р’В°Р РЋР вЂљР РЋР Р‰', 'Р  Р’В¤Р  Р’ВµР  Р вЂ Р РЋР вЂљР  Р’В°Р  Р’В»Р РЋР Р‰', 'Р  РЎС™Р  Р’В°Р РЋР вЂљР РЋРІР‚С™', 'Р  РЎвЂ™Р  РЎвЂ”Р РЋР вЂљР  Р’ВµР  Р’В»Р РЋР Р‰', 'Р  РЎС™Р  Р’В°Р  РІвЂћвЂ“', 'Р  Р’ВР РЋР вЂ№Р  Р вЂ¦Р РЋР Р‰', 'Р  Р’ВР РЋР вЂ№Р  Р’В»Р РЋР Р‰', 'Р  РЎвЂ™Р  Р вЂ Р  РЎвЂ“Р РЋРЎвЂњР РЋР С“Р РЋРІР‚С™', 'Р  Р Р‹Р  Р’ВµР  Р вЂ¦Р РЋРІР‚С™Р РЋР РЏР  Р’В±Р РЋР вЂљР РЋР Р‰', 'Р  РЎвЂєР  РЎвЂќР РЋРІР‚С™Р РЋР РЏР  Р’В±Р РЋР вЂљР РЋР Р‰', 'Р  РЎСљР  РЎвЂўР РЋР РЏР  Р’В±Р РЋР вЂљР РЋР Р‰', 'Р  РІР‚СњР  Р’ВµР  РЎвЂќР  Р’В°Р  Р’В±Р РЋР вЂљР РЋР Р‰'];
+            document.getElementById('monthName').textContent = `${monthNames[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = (firstDay.getDay() + 6) % 7;
+
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = '';
+
+            ['Р  РЎСџР  Р вЂ¦', 'Р  РІР‚в„ўР РЋРІР‚С™', 'Р  Р Р‹Р РЋР вЂљ', 'Р  Р’В§Р РЋРІР‚С™', 'Р  РЎСџР РЋРІР‚С™', 'Р  Р Р‹Р  Р’В±', 'Р  РІР‚в„ўР РЋР С“'].forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'weekday-header';
+                header.textContent = day;
+                calendar.appendChild(header);
             });
 
-            const avgPerDay = successDays > 0 ? Math.round(total / successDays) : 0;
-
-            document.getElementById('totalPushups').textContent = total;
-            document.getElementById('streak').textContent = streak;
-            document.getElementById('successDays').textContent = successDays;
-            document.getElementById('avgPerDay').textContent = avgPerDay;
-        }
-
-        async function renderMonthCalendar() {
-            const monthSelect = document.getElementById('monthSelect').value;
-            const [year, month] = monthSelect.split('-');
-            const workouts = await getWorkouts();
-
-            const monthCalendar = document.getElementById('monthCalendar');
-            monthCalendar.innerHTML = '';
-
-            const firstDay = new Date(year, month - 1, 1).getDay();
-            const daysInMonth = new Date(year, month, 0).getDate();
-
-            for (let i = 0; i < firstDay; i++) {
-                const emptyDay = document.createElement('div');
-                monthCalendar.appendChild(emptyDay);
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+            for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day other-month';
+                day.textContent = prevMonthLastDay - i;
+                calendar.appendChild(day);
             }
 
+            const today = new Date();
             for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const workout = workouts[dateStr];
-                
+                const date = new Date(year, month, day);
+                const dateStr = date.toDateString();
+
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day';
                 dayElement.textContent = day;
+                dayElement.onclick = () => selectDate(dateStr);
+
+                const workout = data.workouts.find(w => w.date === dateStr);
+
+                if (dateStr === today.toDateString()) {
+                    dayElement.classList.add('today');
+                }
 
                 if (workout) {
-                    if (workout.type === 'missed') {
+                    if (workout.missed) {
                         dayElement.classList.add('missed');
-                    } else if (workout.type === 'max_test') {
-                        dayElement.classList.add('max-test');
-                    } else if (workout.reps > 0) {
-                        dayElement.classList.add('completed');
+                    } else if (workout.total >= 50) {
+                        dayElement.classList.add('trained');
+                    } else {
+                        dayElement.classList.add('partial');
                     }
                 }
 
-                dayElement.addEventListener('click', () => showDayDetails(dateStr, workout));
-                monthCalendar.appendChild(dayElement);
+                if (dateStr === selectedDate) {
+                    dayElement.classList.add('selected');
+                }
+
+                calendar.appendChild(dayElement);
+            }
+
+            const totalCells = calendar.children.length;
+            const remainingCells = 42 - totalCells;
+            for (let i = 1; i <= remainingCells; i++) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day other-month';
+                day.textContent = i;
+                calendar.appendChild(day);
             }
         }
 
-        function showDayDetails(dateStr, workout) {
-            if (!workout) {
-                alert('Нет данных на эту дату');
+        function selectDate(dateStr) {
+            selectedDate = dateStr;
+            const workout = data.workouts.find(w => w.date === dateStr);
+
+            const dateObj = new Date(dateStr);
+            document.getElementById('selectedDateDisplay').textContent = dateObj.toLocaleDateString('ru-RU', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+
+            renderMonth();
+
+            const setsContainer = document.getElementById('setsContainer');
+            setsContainer.innerHTML = '<div class="set-row"><input type="number" class="set-input" placeholder="Р  РЎСџР  РЎвЂўР  Р вЂ Р РЋРІР‚С™Р  РЎвЂўР РЋР вЂљР  Р’ВµР  Р вЂ¦Р  РЎвЂР РЋР РЏ Р  РЎвЂ”Р  РЎвЂўР  РўвЂР РЋРІР‚В¦Р  РЎвЂўР  РўвЂР  Р’В° 1" min="0"><button class="delete-btn" onclick="deleteSet(this)">Р Р†РЎСљР Р‰</button></div>';
+            document.getElementById('workoutTime').value = '';
+            document.getElementById('fromKnees').checked = false;
+
+            if (workout && workout.sets && workout.sets.length > 0) {
+                setsContainer.innerHTML = '';
+                workout.sets.forEach((sets, index) => {
+                    const row = document.createElement('div');
+                    row.className = 'set-row';
+                    row.innerHTML = `<input type="number" class="set-input" placeholder="Р  РЎСџР  РЎвЂўР  Р вЂ Р РЋРІР‚С™Р  РЎвЂўР РЋР вЂљР  Р’ВµР  Р вЂ¦Р  РЎвЂР РЋР РЏ Р  РЎвЂ”Р  РЎвЂўР  РўвЂР РЋРІР‚В¦Р  РЎвЂўР  РўвЂР  Р’В° ${index + 1}" min="0" value="${sets}"><button class="delete-btn" onclick="deleteSet(this)">Р Р†РЎСљР Р‰</button>`;
+                    setsContainer.appendChild(row);
+                });
+                document.getElementById('workoutTime').value = workout.time || '';
+                document.getElementById('fromKnees').checked = workout.fromKnees || false;
+            }
+
+            displayWorkoutInfo();
+        }
+
+        function addSet() {
+            const setsContainer = document.getElementById('setsContainer');
+            const setCount = setsContainer.children.length + 1;
+            const row = document.createElement('div');
+            row.className = 'set-row';
+            row.innerHTML = `<input type="number" class="set-input" placeholder="Р  РЎСџР  РЎвЂўР  Р вЂ Р РЋРІР‚С™Р  РЎвЂўР РЋР вЂљР  Р’ВµР  Р вЂ¦Р  РЎвЂР РЋР РЏ Р  РЎвЂ”Р  РЎвЂўР  РўвЂР РЋРІР‚В¦Р  РЎвЂўР  РўвЂР  Р’В° ${setCount}" min="0"><button class="delete-btn" onclick="deleteSet(this)">Р Р†РЎСљР Р‰</button>`;
+            setsContainer.appendChild(row);
+        }
+
+        function deleteSet(btn) {
+            btn.parentElement.remove();
+        }
+
+        function updateKneesStatus() {
+            const fromKnees = document.getElementById('fromKnees').checked;
+            if (fromKnees) {
+                console.log('Р Р†РЎС™РІР‚В¦ Р  РЎвЂєР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР РЋР РЏ Р  РЎвЂўР РЋРІР‚С™ Р  РЎвЂќР  РЎвЂўР  Р’В»Р  Р’ВµР  Р вЂ¦Р  Р’ВµР  РІвЂћвЂ“ Р  Р вЂ Р  РЎвЂќР  Р’В»Р РЋР вЂ№Р РЋРІР‚РЋР  Р’ВµР  Р вЂ¦Р РЋРІР‚в„–');
+            }
+        }
+
+        function saveWorkout() {
+            const inputs = document.querySelectorAll('.set-input');
+            const sets = Array.from(inputs).map(input => parseInt(input.value) || 0);
+            const total = sets.reduce((a, b) => a + b, 0);
+            const time = document.getElementById('workoutTime').value;
+            const fromKnees = document.getElementById('fromKnees').checked;
+
+            if (total === 0) {
+                alert('Р Р†РЎв„ў Р С—РЎвЂР РЏ Р  РІР‚в„ўР  Р вЂ Р  Р’ВµР  РўвЂР  РЎвЂР РЋРІР‚С™Р  Р’Вµ Р РЋРІР‚В¦Р  РЎвЂўР РЋРІР‚С™Р РЋР РЏ Р  Р’В±Р РЋРІР‚в„– Р  РЎвЂўР  РўвЂР  Р вЂ¦Р  РЎвЂў Р  РЎвЂ”Р  РЎвЂўР  Р вЂ Р РЋРІР‚С™Р  РЎвЂўР РЋР вЂљР  Р’ВµР  Р вЂ¦Р  РЎвЂР  Р’Вµ');
                 return;
             }
 
-            let details = `📅 ${dateStr}\n`;
-            if (workout.type === 'missed') {
-                details += 'Статус: Пропущено ❌';
-            } else if (workout.type === 'max_test') {
-                details += `Тип: Проверка максимума 📊\nПовторения: ${workout.reps}`;
-            } else {
-                details += `Всего: ${workout.reps}\n`;
-                if (workout.sets && workout.sets.length > 0) {
-                    details += `\nПодходы:\n`;
-                    workout.sets.forEach((set, i) => {
-                        details += `${i + 1}. ${set.reps} (${set.difficulty === 'knee' ? 'От колен' : 'Обычные'})\n`;
-                    });
-                }
-            }
-            alert(details);
+            // Р  Р Р‹Р  РЎвЂўР РЋРІР‚В¦Р РЋР вЂљР  Р’В°Р  Р вЂ¦Р РЋР РЏР  Р’ВµР  РЎВ Р  Р вЂ  pendingWorkout Р  РЎвЂ Р  РЎвЂўР РЋРІР‚С™Р  РЎвЂќР РЋР вЂљР РЋРІР‚в„–Р  Р вЂ Р  Р’В°Р  Р’ВµР  РЎВ Р  РЎВР  РЎвЂўР  РўвЂР  Р’В°Р  Р’В»
+            pendingWorkout = { date: selectedDate, time, sets, total, missed: false, fromKnees };
+            openDifficultyModal();
         }
 
-        async function updateChart() {
-            const period = document.getElementById('chartPeriod').value;
-            const workouts = await getWorkouts();
+        function openDifficultyModal() {
+            document.getElementById('difficultyModal').classList.add('show');
+        }
+
+        function closeDifficultyModal() {
+            document.getElementById('difficultyModal').classList.remove('show');
+            pendingWorkout = null;
+        }
+
+        function confirmDifficulty() {
+            if (!pendingWorkout) return;
+
+            const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+            pendingWorkout.difficulty = difficulty;
+
+            const existingIdx = data.workouts.findIndex(w => w.date === pendingWorkout.date);
+            if (existingIdx >= 0) {
+                data.workouts[existingIdx] = pendingWorkout;
+            } else {
+                data.workouts.push(pendingWorkout);
+            }
+
+            saveUserData();
+            renderMonth();
+            updateStats();
+            closeDifficultyModal();
+            
+            const kneesTxt = pendingWorkout.fromKnees ? ' (Р  РЎвЂўР РЋРІР‚С™ Р  РЎвЂќР  РЎвЂўР  Р’В»Р  Р’ВµР  Р вЂ¦Р  Р’ВµР  РІвЂћвЂ“)' : '';
+            const difficultyEmoji = { easy: 'РЎР‚РЎСџР’ВР вЂ°', medium: 'РЎР‚РЎСџРІР‚в„ўР вЂћ', hard: 'РЎР‚РЎСџРІР‚СњРўС’' };
+            const emoji = difficultyEmoji[difficulty] || 'Р Р†РЎС™РІР‚В¦';
+            
+            alert(pendingWorkout.total >= 50 ? 
+                `${emoji} Р  РЎвЂєР РЋРІР‚С™Р  Р’В»Р  РЎвЂР РЋРІР‚РЋР  Р вЂ¦Р  РЎвЂў! ${pendingWorkout.total} Р  РЎвЂўР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР  РІвЂћвЂ“${kneesTxt}!` : 
+                `РЎР‚РЎСџРІР‚СљРЎСљ Р  РІР‚вЂќР  Р’В°Р  РЎвЂ”Р  РЎвЂР РЋР С“Р  Р’В°Р  Р вЂ¦Р  РЎвЂў ${pendingWorkout.total} Р  РЎвЂўР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР  РІвЂћвЂ“${kneesTxt}`);
+        }
+
+        function markMissed() {
+            const existingIdx = data.workouts.findIndex(w => w.date === selectedDate);
+            const workout = { date: selectedDate, missed: true, total: 0, sets: [], time: '' };
+
+            if (existingIdx >= 0) {
+                data.workouts[existingIdx] = workout;
+            } else {
+                data.workouts.push(workout);
+            }
+
+            saveUserData();
+            renderMonth();
+            updateStats();
+            alert('Р Р†РЎСљР Р‰ Р  РІР‚СњР  Р’ВµР  Р вЂ¦Р РЋР Р‰ Р  РЎвЂўР РЋРІР‚С™Р  РЎВР  Р’ВµР РЋРІР‚РЋР  Р’ВµР  Р вЂ¦ Р  РЎвЂќР  Р’В°Р  РЎвЂќ Р  РЎвЂ”Р РЋР вЂљР  РЎвЂўР  РЎвЂ”Р РЋРЎвЂњР РЋР С“Р  РЎвЂќ');
+        }
+
+        function saveWeight() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            if (!weight || weight <= 0) {
+                alert('Р  РІР‚в„ўР  Р вЂ Р  Р’ВµР  РўвЂР  РЎвЂР РЋРІР‚С™Р  Р’Вµ Р  Р вЂ Р  Р’ВµР РЋР С“');
+                return;
+            }
+
+            const existingIdx = data.weights.findIndex(w => w.date === selectedDate);
+            if (existingIdx >= 0) {
+                data.weights[existingIdx] = { date: selectedDate, weight };
+            } else {
+                data.weights.push({ date: selectedDate, weight });
+            }
+
+            saveUserData();
+            updateStats();
+            document.getElementById('weight').value = '';
+            alert('Р Р†РЎС™РІР‚В¦ Р  РІР‚в„ўР  Р’ВµР РЋР С“ Р РЋР С“Р  РЎвЂўР РЋРІР‚В¦Р РЋР вЂљР  Р’В°Р  Р вЂ¦Р РЋРІР‚ВР  Р вЂ¦');
+        }
+
+        function displayWorkoutInfo() {
+            const workout = data.workouts.find(w => w.date === selectedDate);
+            const infoDiv = document.getElementById('selectedDateInfo');
+
+            if (!workout) {
+                infoDiv.innerHTML = '<p style="color: var(--text-light); text-align: center;">Р  РЎСљР  Р’ВµР РЋРІР‚С™ Р  РўвЂР  Р’В°Р  Р вЂ¦Р  Р вЂ¦Р РЋРІР‚в„–Р РЋРІР‚В¦</p>';
+                return;
+            }
+
+            if (workout.missed) {
+                infoDiv.innerHTML = '<p style="color: var(--danger); text-align: center;">Р Р†РЎСљР Р‰ Р  РІР‚СњР  Р’ВµР  Р вЂ¦Р РЋР Р‰ Р  РЎвЂ”Р РЋР вЂљР  РЎвЂўР  РЎвЂ”Р РЋРЎвЂњР РЋРІР‚В°Р  Р’ВµР  Р вЂ¦</p>';
+                return;
+            }
+
+            const dateObj = new Date(selectedDate);
+            const kneesTxt = workout.fromKnees ? ' <span style="color: var(--danger);">(Р  РЎвЂўР РЋРІР‚С™ Р  РЎвЂќР  РЎвЂўР  Р’В»Р  Р’ВµР  Р вЂ¦Р  Р’ВµР  РІвЂћвЂ“)</span>' : '';
+            const difficultyEmoji = { easy: 'РЎР‚РЎСџР’ВР вЂ°', medium: 'РЎР‚РЎСџРІР‚в„ўР вЂћ', hard: 'РЎР‚РЎСџРІР‚СњРўС’' };
+            const emoji = difficultyEmoji[workout.difficulty] || '';
+            const difficultyTxt = workout.difficulty ? `<p style="font-size: 0.9em; color: var(--text-light);">Р  Р Р‹Р  Р’В»Р  РЎвЂўР  Р’В¶Р  Р вЂ¦Р  РЎвЂўР РЋР С“Р РЋРІР‚С™Р РЋР Р‰: ${emoji}</p>` : '';
+            
+            const setsHTML = workout.sets.map((s, i) => `<div style="padding: 8px; background: var(--bg); border-radius: 8px; margin: 4px 0;"><strong>Р  РЎСџР  РЎвЂўР  РўвЂР РЋРІР‚В¦Р  РЎвЂўР  РўвЂ ${i + 1}:</strong> ${s} Р  РЎвЂўР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР  РІвЂћвЂ“</div>`).join('');
+
+            infoDiv.innerHTML = `<div style="text-align: center;"><p style="font-size: 0.9em; color: var(--text-light);">${dateObj.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p><p style="font-size: 1.4em; font-weight: 800; color: var(--success); margin: 8px 0;">Р Р†РЎС™РІР‚В¦ ${workout.total} Р  РЎвЂўР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР  РІвЂћвЂ“${kneesTxt}</p>${workout.time ? `<p style="font-size: 0.9em; color: var(--text-light);">Р Р†Р РЏР’В° ${workout.time}</p>` : ''}${difficultyTxt}</div><div style="margin-top: 12px;">${setsHTML}</div>`;
+        }
+
+        function renderChart() {
             const chart = document.getElementById('chart');
+            const period = document.getElementById('chartPeriod')?.value || '7';
+
+            let daysToShow = 7;
+            let start = new Date();
+
+            if (period === '7') {
+                daysToShow = 7;
+                start.setDate(start.getDate() - 6);
+            } else if (period === '14') {
+                daysToShow = 14;
+                start.setDate(start.getDate() - 13);
+            } else if (period === '30') {
+                daysToShow = 30;
+                start.setDate(start.getDate() - 29);
+            } else if (period === 'all') {
+                if (data.workouts.length === 0) {
+                    chart.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-light);">Р  РЎСљР  Р’ВµР РЋРІР‚С™ Р  РўвЂР  Р’В°Р  Р вЂ¦Р  Р вЂ¦Р РЋРІР‚в„–Р РЋРІР‚В¦</p>';
+                    return;
+                }
+
+                const sortedWorkouts = [...data.workouts].sort((a, b) => new Date(a.date) - new Date(b.date));
+                const firstDate = new Date(sortedWorkouts[0].date);
+                start = firstDate;
+
+                const today = new Date();
+                daysToShow = Math.ceil((today - firstDate) / (1000 * 60 * 60 * 24)) + 1;
+            }
+
             chart.innerHTML = '';
 
-            let entries = Object.entries(workouts).sort((a, b) => a[0].localeCompare(b[0]));
-
-            if (period !== 'all') {
-                const days = parseInt(period);
-                const cutoffDate = new Date();
-                cutoffDate.setDate(cutoffDate.getDate() - days);
-                entries = entries.filter(([date]) => new Date(date) >= cutoffDate);
+            let maxPushups = 50;
+            for (let i = 0; i < daysToShow; i++) {
+                const date = new Date(start);
+                date.setDate(start.getDate() + i);
+                const dateStr = date.toDateString();
+                const workout = data.workouts.find(w => w.date === dateStr);
+                const total = workout?.total || 0;
+                if (total > maxPushups) maxPushups = total;
             }
 
-            if (entries.length === 0) {
-                chart.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-light); text-align: center;">Нет данных</p>';
-                return;
-            }
+            for (let i = 0; i < daysToShow; i++) {
+                const date = new Date(start);
+                date.setDate(start.getDate() + i);
+                const dateStr = date.toDateString();
+                const workout = data.workouts.find(w => w.date === dateStr);
+                const total = workout?.total || 0;
 
-            const maxReps = Math.max(...entries.map(([, w]) => w.reps || 0), 50);
+                const barHeight = total > 0 ? Math.max(20, Math.round((total / maxPushups) * 80)) : 5;
+                const bgColor = total >= 50 ? 'var(--success)' : total > 0 ? 'var(--primary)' : '#ddd';
 
-            entries.forEach(([date, workout]) => {
-                const height = workout.reps > 0 ? (workout.reps / maxReps) * 100 : 0;
-                const isMaxTest = workout.type === 'max_test';
-                
                 const bar = document.createElement('div');
-                bar.className = 'chart-bar';
-                bar.innerHTML = `
-                    <div class="chart-column ${isMaxTest ? 'max-test' : ''}" style="height: ${height}%;"></div>
-                    <div class="chart-label">${new Date(date).getDate()}</div>
-                `;
+                bar.style.cssText = `display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-height: 120px; gap: 6px; cursor: pointer;`;
+                bar.innerHTML = `<div title="${total} Р  РЎвЂўР РЋРІР‚С™Р  Р’В¶Р  РЎвЂР  РЎВР  Р’В°Р  Р вЂ¦Р  РЎвЂР  РІвЂћвЂ“" style="width: 100%; height: ${barHeight}px; background: ${bgColor}; border-radius: 4px 4px 0 0;"></div><p style="font-size: 0.75em; color: var(--text-light); margin: 0; font-weight: 600; word-break: break-word;">${date.getDate()}</p>`;
+                bar.onclick = () => selectDate(dateStr);
                 chart.appendChild(bar);
-            });
+            }
         }
 
-        async function updateMaxTestChart() {
-            const maxTests = await getMaxTests();
-            const container = document.getElementById('maxTestChart');
+        function updateChartPeriod() {
+            renderChart();
+        }
 
-            if (maxTests.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-light); text-align: center;">Нет результатов максимума</p>';
-                return;
+        function updateStats() {
+            const total = data.workouts.reduce((sum, w) => sum + (w.total || 0), 0);
+            const success = data.workouts.filter(w => w.total >= 50).length;
+            const avgPerDay = data.workouts.length > 0 ? Math.round(total / data.workouts.length) : 0;
+
+            let streak = 0;
+            if (data.workouts.length > 0) {
+                const sorted = [...data.workouts].sort((a, b) => new Date(b.date) - new Date(a.date));
+                let current = new Date(sorted[0].date);
+
+                for (let i = 0; i < 365; i++) {
+                    const dateStr = current.toDateString();
+                    const workout = data.workouts.find(w => w.date === dateStr);
+
+                    if (workout) {
+                        if (workout.total >= 50 && !workout.missed) {
+                            streak++;
+                            current.setDate(current.getDate() - 1);
+                        } else if (workout.missed) {
+                            break;
+                        } else {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
             }
 
-            const maxReps = Math.max(...maxTests.map(t => t.reps)) * 1.1;
-
-            container.innerHTML = maxTests.map((test) => {
-                const date = new Date(test.date);
-                const formatted = date.toLocaleDateString('ru-RU');
-                const height = (test.reps / maxReps) * 100;
-
-                return `
-                    <div class="chart-bar" style="margin-bottom: 16px;">
-                        <div style="width: 100%; display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span style="font-weight: 600;">${formatted}</span>
-                            <span style="color: var(--warning); font-weight: 700;">${test.reps} повт.</span>
-                        </div>
-                        <div class="chart-column max-test" style="height: 30px; border-radius: 8px;"></div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        async function updateWeightTrend() {
-            const weights = await getWeights();
-            const container = document.getElementById('weightTrend');
-
-            if (weights.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-light); text-align: center;">Нет записей веса</p>';
-                return;
+            const lastWeight = data.weights.length > 0 ? data.weights[data.weights.length - 1] : null;
+            const weightInfo = document.getElementById('weightInfo');
+            if (lastWeight) {
+                weightInfo.innerHTML = `<p style="margin: 0;"><strong>${lastWeight.weight} Р  РЎвЂќР  РЎвЂ“</strong></p><p style="font-size: 0.85em; color: var(--text-light); margin: 4px 0;">Р  РЎвЂўР РЋРІР‚С™ ${new Date(lastWeight.date).toLocaleDateString('ru-RU')}</p>`;
             }
 
-            const sorted = [...weights].sort((a, b) => new Date(a.date) - new Date(b.date));
+            document.getElementById('totalPushups').textContent = total.toLocaleString();
+            document.getElementById('streak').textContent = streak;
+            document.getElementById('successDays').textContent = success;
+            document.getElementById('avgPerDay').textContent = avgPerDay;
 
-            container.innerHTML = sorted.map((w, idx) => {
-                const date = new Date(w.date).toLocaleDateString('ru-RU');
-                const prev = idx > 0 ? sorted[idx - 1].weight : w.weight;
-                const diff = w.weight - prev;
-                const diffStr = diff > 0 ? `+${diff.toFixed(1)}` : `${diff.toFixed(1)}`;
-                const diffColor = diff > 0 ? 'var(--danger)' : 'var(--success)';
-
-                return `
-                    <div class="weight-point">
-                        <div>
-                            <div style="font-weight: 600; color: var(--text);">${date}</div>
-                            <div style="color: ${diffColor}; font-size: 0.9em;">${diffStr} кг</div>
-                        </div>
-                        <div class="weight-value">${w.weight.toFixed(1)} кг</div>
-                    </div>
-                `;
-            }).join('');
+            renderChart();
         }
 
-        // Event listeners
-        document.getElementById('monthSelect').addEventListener('change', renderMonthCalendar);
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && document.getElementById('authScreen').style.display !== 'none') {
-                handleLogin();
+        document.addEventListener('DOMContentLoaded', function () {
+            initFirebase();
+        });
+
+        // Р  РІР‚вЂќР  Р’В°Р  РЎвЂќР РЋР вЂљР РЋРІР‚в„–Р РЋРІР‚С™Р  РЎвЂР  Р’Вµ Р  РЎВР  РЎвЂўР  РўвЂР  Р’В°Р  Р’В»Р  Р’В° Р  РЎвЂ”Р РЋР вЂљР  РЎвЂ Р  РЎвЂќР  Р’В»Р  РЎвЂР  РЎвЂќР  Р’Вµ Р  Р вЂ¦Р  Р’В° Р РЋРІР‚С›Р  РЎвЂўР  Р вЂ¦
+        document.getElementById('difficultyModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDifficultyModal();
             }
         });
     </script>
 </body>
+
 </html>
