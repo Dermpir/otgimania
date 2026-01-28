@@ -404,27 +404,21 @@
     </style>
 </head>
 <body>
-    <!-- Auth Screen -->
     <div id="authScreen" class="auth-screen">
         <div class="auth-form">
             <div class="auth-title">💪</div>
             <div class="auth-subtitle">Отжимания Cloud</div>
-
             <div id="authError" class="form-error" style="display: none; text-align: center; margin-bottom: 16px;"></div>
-
             <div class="form-group">
                 <label class="form-label">Email</label>
                 <input type="email" id="authEmail" class="form-input" placeholder="your@email.com">
             </div>
-
             <div class="form-group">
                 <label class="form-label">Пароль</label>
                 <input type="password" id="authPassword" class="form-input" placeholder="••••••••">
             </div>
-
             <button class="btn btn-primary" id="loginBtn" onclick="handleLogin()">Вход</button>
             <button class="btn btn-secondary" id="signupBtn" onclick="toggleAuthMode()">Регистрация</button>
-
             <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 0.85em; color: var(--text-light);">
                 <p>Демо-аккаунт:</p>
                 <p><strong>Email:</strong> demo@test.com</p>
@@ -433,42 +427,32 @@
         </div>
     </div>
 
-    <!-- Main App -->
     <div id="appScreen" style="display: none;">
         <div class="container">
             <div class="header">
                 <h1>💪 Отжимания</h1>
                 <button class="btn btn-logout" onclick="handleLogout()">Выход</button>
             </div>
-
             <div id="maxTestAlert" class="card" style="display: none;">
-                <div class="alert alert-warning">
-                    ⚠️ После 500 отжиманий - нужна проверка максимума!
-                </div>
+                <div class="alert alert-warning">⚠️ После 500 отжиманий - нужна проверка максимума!</div>
             </div>
-
             <div class="card">
                 <div class="section-title">🏋️ Добавить тренировку</div>
                 <div id="setsContainer"></div>
                 <button class="btn btn-primary btn-small" onclick="addSet()">➕ Добавить подход</button>
-                
                 <div class="btn-group">
                     <button class="btn btn-success" onclick="saveWorkout()">✅ Записать</button>
                     <button class="btn btn-danger" onclick="markMissed()">❌ Пропуск</button>
                 </div>
             </div>
-
             <div class="card">
                 <div class="section-title">⚡ Проверка максимума</div>
                 <div class="input-group">
                     <input type="number" id="maxTestReps" class="form-input" placeholder="Макс отжиманий" min="0">
                     <button class="btn btn-warning btn-small" onclick="saveMaxTest()">📊 Сохранить</button>
                 </div>
-                <div id="maxTestInfo" style="color: var(--text-light); text-align: center; padding: 12px;">
-                    Результаты максимум тестов здесь
-                </div>
+                <div id="maxTestInfo" style="color: var(--text-light); text-align: center; padding: 12px;">Результаты максимум тестов здесь</div>
             </div>
-
             <div class="card">
                 <div class="stats">
                     <div class="stat">
@@ -489,7 +473,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card">
                 <div class="section-title">📅 Календарь</div>
                 <div class="input-group">
@@ -497,7 +480,6 @@
                 </div>
                 <div class="calendar" id="monthCalendar"></div>
             </div>
-
             <div class="card">
                 <div class="section-title">⚖️ Вес и тренд</div>
                 <div class="input-group">
@@ -506,7 +488,6 @@
                 </div>
                 <div id="weightTrend"></div>
             </div>
-
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                     <div class="section-title" style="margin-bottom: 0;">📈 График отжиманий</div>
@@ -519,7 +500,6 @@
                 </div>
                 <div class="chart-container" id="chart"></div>
             </div>
-
             <div class="card">
                 <div class="section-title">📊 График максимума</div>
                 <div id="maxTestChart"></div>
@@ -528,7 +508,6 @@
     </div>
 
     <script>
-        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCF6dkvdzAk2LqhjkX3VYos9xwHHAK7D5s",
             authDomain: "pushups-tracker-8ee95.firebaseapp.com",
@@ -542,14 +521,8 @@
         let firebaseUser = null;
         let currentUser = null;
         let isSignupMode = false;
+        let data = { workouts: [], weights: [] };
 
-        // ГЛАВНЫЕ ДАННЫЕ - структура как в paste.txt
-        let data = { 
-            workouts: [],
-            weights: []
-        };
-
-        // Initialize Firebase
         try {
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
@@ -559,7 +532,6 @@
             console.error("Firebase ошибка:", e);
         }
 
-        // Auth State
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 firebaseUser = user;
@@ -620,7 +592,6 @@
             document.getElementById('authError').style.display = 'none';
         }
 
-        // ЗАГРУЗКА ДАННЫХ из Firebase
         async function loadFirebaseData() {
             if (!firebase.auth().currentUser) {
                 console.error("Нет пользователя");
@@ -629,7 +600,7 @@
             }
 
             const userId = firebase.auth().currentUser.uid;
-            console.log("Загружаем данные для пользователя:", userId);
+            console.log("🔄 Загружаем данные для пользователя:", userId);
 
             try {
                 const snapshot = await firebase.database().ref('users/' + userId).once('value');
@@ -638,15 +609,14 @@
                     console.log("✅ Данные загружены из Firebase:", data);
                 } else {
                     data = { workouts: [], weights: [] };
-                    console.log("Нет данных, начинаем с нуля");
+                    console.log("ℹ️ Нет данных, начинаем с нуля");
                 }
             } catch (error) {
-                console.error("Ошибка загрузки:", error);
+                console.error("❌ Ошибка загрузки:", error);
                 data = { workouts: [], weights: [] };
             }
         }
 
-        // СОХРАНЕНИЕ ДАННЫХ в Firebase
         async function saveUserData() {
             if (!firebase.auth().currentUser) {
                 console.error("Нет пользователя");
@@ -654,7 +624,6 @@
             }
 
             const userId = firebase.auth().currentUser.uid;
-            console.log("Сохраняем данные для пользователя:", userId);
 
             try {
                 await firebase.database().ref('users/' + userId).set(data);
@@ -665,16 +634,14 @@
             }
         }
 
-        // App Functions
         async function init() {
+            console.log("=== НАЧАЛО ИНИЦИАЛИЗАЦИИ ===");
             const now = new Date();
             document.getElementById('monthSelect').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
             
-            // СНАЧАЛА загружаем данные!
             await loadFirebaseData();
-            console.log("Данные загружены, начинаем рендер...");
+            console.log("После загрузки data:", data);
             
-            // Теперь рендерим все
             addSet();
             await renderMonthCalendar();
             await updateStats();
@@ -682,7 +649,8 @@
             await updateMaxTestChart();
             await updateMaxTestAlert();
             await updateWeightTrend();
-            console.log("Все отрендерено!");
+            
+            console.log("=== ИНИЦИАЛИЗАЦИЯ ЗАВЕРШЕНА ===");
         }
 
         function addSet() {
@@ -737,11 +705,7 @@
             }
 
             const today = new Date().toISOString().split('T')[0];
-            
-            // Удаляем старую тренировку на этот день если есть
             data.workouts = data.workouts.filter(w => w.date !== today);
-            
-            // Добавляем новую
             data.workouts.push({ 
                 date: today, 
                 total: totalReps, 
@@ -752,10 +716,10 @@
 
             await saveUserData();
             clearSetInputs();
-            updateStats();
-            renderMonthCalendar();
-            updateChart();
-            updateMaxTestAlert();
+            await updateStats();
+            await renderMonthCalendar();
+            await updateChart();
+            await updateMaxTestAlert();
             alert(`✅ Записано ${totalReps} отжиманий!`);
         }
 
@@ -769,11 +733,7 @@
             }
 
             const today = new Date().toISOString().split('T')[0];
-            
-            // Удаляем старый тест если есть
             data.workouts = data.workouts.filter(w => w.date !== today);
-            
-            // Добавляем новый тест
             data.workouts.push({ 
                 date: today, 
                 total: reps, 
@@ -784,21 +744,17 @@
 
             await saveUserData();
             input.value = '';
-            updateStats();
-            renderMonthCalendar();
-            updateChart();
-            updateMaxTestChart();
-            updateMaxTestAlert();
+            await updateStats();
+            await renderMonthCalendar();
+            await updateChart();
+            await updateMaxTestChart();
+            await updateMaxTestAlert();
             alert('✅ Максимум записан!');
         }
 
         async function markMissed() {
             const today = new Date().toISOString().split('T')[0];
-            
-            // Удаляем старую тренировку если есть
             data.workouts = data.workouts.filter(w => w.date !== today);
-            
-            // Добавляем пропуск
             data.workouts.push({ 
                 date: today, 
                 total: 0, 
@@ -809,9 +765,9 @@
 
             await saveUserData();
             clearSetInputs();
-            updateStats();
-            renderMonthCalendar();
-            updateChart();
+            await updateStats();
+            await renderMonthCalendar();
+            await updateChart();
             alert('⚠️ День помечен как пропущенный');
         }
 
@@ -829,11 +785,7 @@
             }
 
             const today = new Date().toISOString().split('T')[0];
-            
-            // Удаляем старый вес если есть
             data.weights = data.weights.filter(w => w.date !== today);
-            
-            // Добавляем новый
             data.weights.push({ 
                 date: today, 
                 weight, 
@@ -842,28 +794,23 @@
 
             await saveUserData();
             input.value = '';
-            updateWeightTrend();
+            await updateWeightTrend();
             alert('✅ Вес записан!');
         }
 
         async function updateMaxTestAlert() {
             const total = data.workouts.reduce((sum, w) => sum + (w.total || 0), 0);
-            const alert = document.getElementById('maxTestAlert');
-            
+            const alertDiv = document.getElementById('maxTestAlert');
             if (total >= 500 && total % 500 >= 450) {
-                alert.style.display = 'block';
+                alertDiv.style.display = 'block';
             } else {
-                alert.style.display = 'none';
+                alertDiv.style.display = 'none';
             }
         }
 
         async function updateStats() {
             const workoutEntries = [...data.workouts].sort((a, b) => a.date.localeCompare(b.date));
-            
-            let total = 0;
-            let successDays = 0;
-            let streak = 0;
-            let currentStreak = 0;
+            let total = 0, successDays = 0, streak = 0, currentStreak = 0;
 
             workoutEntries.forEach((workout) => {
                 if (workout.type !== 'missed') {
@@ -877,7 +824,6 @@
             });
 
             const avgPerDay = successDays > 0 ? Math.round(total / successDays) : 0;
-
             document.getElementById('totalPushups').textContent = total;
             document.getElementById('streak').textContent = streak;
             document.getElementById('successDays').textContent = successDays;
@@ -887,7 +833,6 @@
         async function renderMonthCalendar() {
             const monthSelect = document.getElementById('monthSelect').value;
             const [year, month] = monthSelect.split('-');
-
             const monthCalendar = document.getElementById('monthCalendar');
             monthCalendar.innerHTML = '';
 
@@ -902,19 +847,14 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const workout = data.workouts.find(w => w.date === dateStr);
-                
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day';
                 dayElement.textContent = day;
 
                 if (workout) {
-                    if (workout.type === 'missed') {
-                        dayElement.classList.add('missed');
-                    } else if (workout.type === 'max_test') {
-                        dayElement.classList.add('max-test');
-                    } else if (workout.total > 0) {
-                        dayElement.classList.add('completed');
-                    }
+                    if (workout.type === 'missed') dayElement.classList.add('missed');
+                    else if (workout.type === 'max_test') dayElement.classList.add('max-test');
+                    else if (workout.total > 0) dayElement.classList.add('completed');
                 }
 
                 dayElement.addEventListener('click', () => showDayDetails(dateStr, workout));
@@ -965,11 +905,9 @@
             }
 
             const maxReps = Math.max(...entries.map((w) => w.total || 0), 50);
-
             entries.forEach((workout) => {
                 const height = workout.total > 0 ? (workout.total / maxReps) * 100 : 0;
                 const isMaxTest = workout.type === 'max_test';
-                
                 const bar = document.createElement('div');
                 bar.className = 'chart-bar';
                 bar.innerHTML = `
@@ -990,12 +928,10 @@
             }
 
             const maxReps = Math.max(...maxTests.map(t => t.total)) * 1.1;
-
             container.innerHTML = maxTests.map((test) => {
                 const date = new Date(test.date);
                 const formatted = date.toLocaleDateString('ru-RU');
                 const height = (test.total / maxReps) * 100;
-
                 return `
                     <div class="chart-bar" style="margin-bottom: 16px;">
                         <div style="width: 100%; display: flex; justify-content: space-between; margin-bottom: 8px;">
@@ -1017,14 +953,12 @@
             }
 
             const sorted = [...data.weights].sort((a, b) => new Date(a.date) - new Date(b.date));
-
             container.innerHTML = sorted.map((w, idx) => {
                 const date = new Date(w.date).toLocaleDateString('ru-RU');
                 const prev = idx > 0 ? sorted[idx - 1].weight : w.weight;
                 const diff = w.weight - prev;
                 const diffStr = diff > 0 ? `+${diff.toFixed(1)}` : `${diff.toFixed(1)}`;
                 const diffColor = diff > 0 ? 'var(--danger)' : 'var(--success)';
-
                 return `
                     <div class="weight-point">
                         <div>
@@ -1037,7 +971,6 @@
             }).join('');
         }
 
-        // Event listeners
         document.getElementById('monthSelect').addEventListener('change', renderMonthCalendar);
         document.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && document.getElementById('authScreen').style.display !== 'none') {
